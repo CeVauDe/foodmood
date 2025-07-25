@@ -17,8 +17,11 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path
-from django.urls.resolvers import URLResolver
+from django.urls.resolvers import URLPattern, URLResolver
 
-urlpatterns: list[URLResolver] = [
+from . import views
+
+urlpatterns: list[URLResolver | URLPattern] = [
+    path("", views.index, name="index"),
     path("admin/", admin.site.urls),
 ]
