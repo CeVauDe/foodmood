@@ -1,0 +1,33 @@
+[project]
+name = "foodmood"
+version = "0.1.0"
+description = "FoodMood is a webpage, that let's you track your meals and your wellbeing to look for correlations"
+authors = [{ name = "CeVauDe", email = "cevaude@outlook.de" }]
+license = "MIT"
+readme = "README.md"
+requires-python = ">=3.13,<4.0"
+dependencies = ["django (>=5.2.4,<6.0.0)"]
+
+[tool.poetry.group.dev.dependencies]
+mypy = "^1.17.0"
+pre-commit = "^4.2.0"
+ruff = "^0.12.5"
+django-types = "^0.22.0"
+django-stubs-ext = "^5.2.2"
+coverage = "^7.10.0"
+
+[tool.poe.tasks]
+runserver = "python foodmood/manage.py runserver"
+startapp = "python foodmood/manage.py startapp"
+migrate = "python foodmood/manage.py migrate"
+mypy = "mypy foodmood --disallow-untyped-calls"
+pre-commit = "pre-commit run --all-files"
+test = "python foodmood/manage.py test foodmood -p 'test*.py' --parallel"
+test-app = "python foodmood/manage.py test -p 'test*.py'"
+test-coverage = { shell = "coverage run --source='.' foodmood/manage.py test foodmood -p 'test*.py' && coverage report" }
+test-coverage-html = { shell = "coverage run --source='.' foodmood/manage.py test foodmood -p 'test*.py' && coverage html" }
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
