@@ -55,6 +55,7 @@ Use the `./scripts/docker.sh` script for common operations:
 ./scripts/docker.sh migrate      # Run migrations
 ./scripts/docker.sh makemigrations  # Create migrations
 ./scripts/docker.sh shell        # Django shell
+./scripts/docker.sh db-shell     # PostgreSQL shell
 
 # Testing and maintenance
 ./scripts/docker.sh test         # Run tests
