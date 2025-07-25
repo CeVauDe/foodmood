@@ -37,6 +37,10 @@ case "$1" in
         echo "🐚 Opening Django shell..."
         docker compose exec web python foodmood/manage.py shell
         ;;
+    "db-shell")
+        echo "🗄️ Opening PostgreSQL shell..."
+        docker compose exec db psql -U foodmood -d foodmood
+        ;;
     "migrate")
         echo "📊 Running migrations..."
         docker compose exec web python foodmood/manage.py migrate
@@ -71,6 +75,7 @@ case "$1" in
         echo "  clean         Clean up everything (containers, images, volumes)"
         echo "  logs          Show service logs"
         echo "  shell         Open Django shell"
+        echo "  db-shell      Open PostgreSQL shell"
         echo "  migrate       Run database migrations"
         echo "  makemigrations Create new migrations"
         echo "  collectstatic Collect static files"
