@@ -1,5 +1,5 @@
 # Use Python 3.13 slim image as base
-FROM python:3.13-slim as base
+FROM python:3.13-slim AS base
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1 \
@@ -32,8 +32,8 @@ RUN poetry config virtualenvs.create false \
     && poetry install --only=main --no-root \
     && rm -rf $POETRY_CACHE_DIR
 
-# Copy project
-COPY . .
+# Copy only the necessary application files
+COPY foodmood/ ./foodmood/
 
 # Create a non-root user
 RUN adduser --disabled-password --gecos '' appuser \
