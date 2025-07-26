@@ -15,9 +15,39 @@ ruff = "^0.12.5"
 django-types = "^0.22.0"
 django-stubs-ext = "^5.2.2"
 coverage = "^7.10.0"
+django-stubs = {extras = ["compatible-mypy"], version = "^5.2.2"}
+
+[tool.mypy]
+python_version = "3.13"
+plugins = ["mypy_django_plugin.main"]
+
+# Require type annotations
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+disallow_untyped_calls = true
+disallow_untyped_decorators = true
+
+# Strict optional and None checks
+strict_optional = true
+no_implicit_optional = true
+
+# Warn about various issues
+warn_return_any = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_unreachable = true
+
+# Additional strict checks
+check_untyped_defs = true
+strict_equality = true
+show_error_codes = true
+
+[tool.django-stubs]
+django_settings_module = "foodmood.settings"
 
 [tool.poe.tasks]
-mypy = "mypy foodmood --disallow-untyped-calls"
+mypy = { shell = "cd foodmood && mypy ." }
+mypy-strict = { shell = "cd foodmood && mypy . --strict" }
 pre-commit = "pre-commit run --all-files"
 startapp  = "python foodmood/manage.py startapp"
 test = "python foodmood/manage.py test foodmood -p 'test*.py' --parallel"
