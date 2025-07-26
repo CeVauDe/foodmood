@@ -1,0 +1,149 @@
+{% extends "layout.html" %}
+
+{% block title %}Login - FoodMood{% endblock %}
+
+{% block head %}
+<style>
+    .login-container {
+        max-width: 450px;
+        width: 100%;
+        padding: 2.5rem;
+        background: var(--card-bg);
+        border-radius: 25px;
+        backdrop-filter: blur(15px);
+        box-shadow: 0 12px 40px var(--shadow-color);
+        border: 2px solid rgba(149, 203, 161, 0.3);
+    }
+
+    .login-title {
+        color: var(--text-primary);
+        font-weight: 700;
+        font-size: 2.5rem;
+        margin-bottom: 2rem;
+        text-align: center;
+        text-shadow: 2px 2px 4px rgba(149, 203, 161, 0.3);
+    }
+
+    .form-label {
+        color: var(--text-primary);
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control {
+        border: 2px solid rgba(149, 203, 161, 0.3);
+        border-radius: 15px;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        background: rgba(255, 255, 255, 0.8);
+        color: var(--text-primary);
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 0.2rem rgba(255, 157, 136, 0.25);
+        background: rgba(255, 255, 255, 0.95);
+    }
+
+    .btn-login-form {
+        background-color: var(--accent-color);
+        border-color: var(--accent-color);
+        color: white;
+        font-weight: 600;
+        padding: 0.75rem 2rem;
+        border-radius: 25px;
+        font-size: 1.1rem;
+        width: 100%;
+        transition: all 0.3s ease;
+        margin-top: 1rem;
+    }
+
+    .btn-login-form:hover {
+        background-color: #e8866f;
+        border-color: #e8866f;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(255, 157, 136, 0.4);
+    }
+
+    .register-link {
+        text-align: center;
+        margin-top: 1.5rem;
+        color: var(--text-secondary);
+    }
+
+    .register-link a {
+        color: var(--accent-color);
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .register-link a:hover {
+        color: #e8866f;
+        text-decoration: underline;
+    }
+
+    .alert {
+        border-radius: 15px;
+        border: none;
+        margin-bottom: 1.5rem;
+    }
+
+    .alert-danger {
+        background-color: rgba(220, 53, 69, 0.1);
+        color: #dc3545;
+        border: 1px solid rgba(220, 53, 69, 0.3);
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="login-container">
+    <h2 class="login-title">Welcome Back</h2>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" class="form-control" id="username" name="username"
+                   required
+                   value="{{ form.username.value|default:'' }}">
+            {% if form.username.errors %}
+                <div class="text-danger mt-1">
+                    {% for error in form.username.errors %}
+                        <small>{{ error }}</small>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" class="form-control" id="password" name="password" required>
+            {% if form.password.errors %}
+                <div class="text-danger mt-1">
+                    {% for error in form.password.errors %}
+                        <small>{{ error }}</small>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <button type="submit" class="btn btn-login-form">Sign In</button>
+    </form>
+
+    <div class="register-link">
+        Don't have an account? <a href="{% url 'users:register' %}">Create one here</a>
+    </div>
+</div>
+{% endblock %}

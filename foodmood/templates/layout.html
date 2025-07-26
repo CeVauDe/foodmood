@@ -64,6 +64,7 @@
                                 </ul>
                             </div>
                         {% else %}
+                            <a class="btn btn-login" href="{% url 'users:login' %}" role="button">Login</a>
                             <a class="btn btn-register" href="{% url 'users:register' %}" role="button">Register</a>
                         {% endif %}
                     </div>
