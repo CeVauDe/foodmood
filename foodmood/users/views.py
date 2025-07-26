@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib import messages
-from django.contrib.auth import login, logout
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.shortcuts import redirect, render
@@ -21,6 +21,11 @@ class CustomUserCreationForm(UserCreationForm):
         return user
 
 
+class LoginForm(forms.Form):
+    username = forms.CharField(max_length=150)
+    password = forms.CharField(widget=forms.PasswordInput)
+
+
 def register(request):
     if request.method == "POST":
         form = CustomUserCreationForm(request.POST)
@@ -38,6 +43,25 @@ def register(request):
         form = CustomUserCreationForm()
 
     return render(request, "users/register.html", {"form": form})
+
+
+def login_view(request):
+    if request.method == "POST":
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data["username"]
+            password = form.cleaned_data["password"]
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                messages.success(request, f"Welcome back, {username}!")
+                return redirect("index")
+            else:
+                messages.error(request, "Invalid username or password.")
+    else:
+        form = LoginForm()
+
+    return render(request, "users/login.html", {"form": form})
 
 
 def logout_view(request):
