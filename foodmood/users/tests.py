@@ -57,8 +57,8 @@ class CustomUserCreationFormTests(TestCase):
         self.assertIn("email", form.errors)
 
     def test_form_username_too_long(self):
-        """Test form with username longer than 150 characters"""
-        long_username = "a" * 151  # 151 characters, exceeds the 150 limit
+        """Test form with username longer than 35 characters"""
+        long_username = "a" * 36  # 36 characters, exceeds the 35 limit
         form_data = {
             "username": long_username,
             "email": "test@example.com",
@@ -70,7 +70,19 @@ class CustomUserCreationFormTests(TestCase):
         self.assertIn("username", form.errors)
         # Check that the error message mentions the character limit
         username_errors = form.errors["username"]
-        self.assertTrue(any("150" in str(error) for error in username_errors))
+        self.assertTrue(any("35" in str(error) for error in username_errors))
+
+    def test_form_username_max_length_valid(self):
+        """Test form with username at exactly 35 characters (should be valid)"""
+        max_length_username = "a" * 35  # Exactly 35 characters
+        form_data = {
+            "username": max_length_username,
+            "email": "test@example.com",
+            "password1": "complexpassword123",
+            "password2": "complexpassword123",
+        }
+        form = CustomUserCreationForm(data=form_data)
+        self.assertTrue(form.is_valid())
 
     def test_form_saves_user_with_email(self):
         """Test that form saves user with email"""

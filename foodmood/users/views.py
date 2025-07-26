@@ -7,6 +7,9 @@ from django.shortcuts import redirect, render
 
 
 class CustomUserCreationForm(UserCreationForm):
+    username = forms.CharField(
+        max_length=35, help_text="Username must be 35 characters or fewer."
+    )
     email = forms.EmailField(required=True)
 
     class Meta:
@@ -22,7 +25,7 @@ class CustomUserCreationForm(UserCreationForm):
 
 
 class LoginForm(forms.Form):
-    username = forms.CharField(max_length=150)
+    username = forms.CharField(max_length=35)
     password = forms.CharField(widget=forms.PasswordInput)
 
 
