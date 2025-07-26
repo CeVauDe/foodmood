@@ -19,6 +19,7 @@ coverage = "^7.10.0"
 [tool.poe.tasks]
 mypy = "mypy foodmood --disallow-untyped-calls"
 pre-commit = "pre-commit run --all-files"
+startapp  = "python foodmood/manage.py startapp"
 test = "python foodmood/manage.py test foodmood -p 'test*.py' --parallel"
 test-app = "python foodmood/manage.py test -p 'test*.py'"
 test-coverage = { shell = "coverage run --source='.' foodmood/manage.py test foodmood -p 'test*.py' && coverage report" }
