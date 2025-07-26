@@ -1,5 +1,8 @@
 # foodmood
 
+
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 ![Tests](https://github.com/CeVauDe/foodmood/workflows/Tests/badge.svg)
 
 FoodMood is a webpage that lets you track your meals and your wellbeing to look for correlations.
