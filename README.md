@@ -1,1 +1,54 @@
 # foodmood
+
+![Tests](https://github.com/CeVauDe/foodmood/workflows/Tests/badge.svg)
+
+FoodMood is a webpage that lets you track your meals and your wellbeing to look for correlations.
+
+## Development
+
+### Running Tests
+
+To run tests locally:
+
+```bash
+# Run all tests
+poetry run python foodmood/manage.py test
+
+# Run tests with coverage
+poetry run coverage run --source='.' foodmood/manage.py test
+poetry run coverage report
+
+# Run specific app tests
+poetry run python foodmood/manage.py test users
+```
+
+### Code Quality
+
+This project uses several tools to maintain code quality:
+
+- **Ruff**: For linting and formatting
+- **MyPy**: For type checking
+- **Coverage**: For test coverage reporting
+
+```bash
+# Run linting
+poetry run ruff check .
+
+# Run formatting
+poetry run ruff format .
+
+# Run type checking
+poetry run mypy foodmood --disallow-untyped-calls
+```
+
+### Continuous Integration
+
+GitHub Actions automatically runs tests and linting on every push and pull request. The CI pipeline includes:
+
+- Running the full test suite with Django's test runner (using SQLite for speed)
+- Code linting with Ruff
+- Type checking with MyPy
+- Coverage reporting
+- Testing against Python 3.13
+
+All pull requests must pass the CI checks before they can be merged.
