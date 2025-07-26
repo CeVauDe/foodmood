@@ -16,7 +16,6 @@ django-types = "^0.22.0"
 django-stubs-ext = "^5.2.2"
 coverage = "^7.10.0"
 django-stubs = {extras = ["compatible-mypy"], version = "^5.2.2"}
-poethepoetry = "^0.31.1"
 
 [tool.mypy]
 python_version = "3.13"
