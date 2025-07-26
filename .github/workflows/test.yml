@@ -53,16 +53,10 @@ jobs:
         poetry run python manage.py migrate
 
     - name: Run tests
-      run: |
-        cd foodmood
-        poetry run python manage.py test -v 2
+      run: poe test
 
     - name: Run tests with coverage
-      run: |
-        cd foodmood
-        poetry run coverage run --source='.' manage.py test
-        poetry run coverage report
-        poetry run coverage xml
+      run: poe test-coverage
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
@@ -104,10 +98,10 @@ jobs:
       run: poetry install --no-interaction
 
     - name: Run Ruff (linting)
-      run: poetry run ruff check .
+      run: poe lint
 
     - name: Run Ruff (formatting)
-      run: poetry run ruff format --check .
+      run: poe format-check
 
     - name: Run MyPy
-      run: poetry run mypy foodmood
+      run: poe mypy
