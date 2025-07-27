@@ -6,14 +6,12 @@ authors = [{ name = "CeVauDe", email = "cevaude@outlook.de" }]
 license = "MIT"
 readme = "README.md"
 requires-python = ">=3.13,<4.0"
-dependencies = ["django (>=5.2.4,<6.0.0)", "python-dotenv (>=1.1.1,<2.0.0)", "psycopg2-binary (>=2.9.10,<3.0.0)"]
+dependencies = ["django (>=5.2.4,<6.0.0)", "python-dotenv (>=1.1.1,<2.0.0)", "psycopg2-binary (>=2.9.10,<3.0.0)", "django-stubs-ext (>=5.2.2,<6.0.0)", "django-types (>=0.22.0,<0.23.0)"]
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.17.0"
 pre-commit = "^4.2.0"
 ruff = "^0.12.5"
-django-types = "^0.22.0"
-django-stubs-ext = "^5.2.2"
 coverage = "^7.10.0"
 
 [tool.mypy]
