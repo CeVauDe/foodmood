@@ -15,11 +15,10 @@ ruff = "^0.12.5"
 django-types = "^0.22.0"
 django-stubs-ext = "^5.2.2"
 coverage = "^7.10.0"
-django-stubs = {extras = ["compatible-mypy"], version = "^5.2.2"}
 
 [tool.mypy]
 python_version = "3.13"
-plugins = ["mypy_django_plugin.main"]
+mypy_path = "./foodmood"
 
 # Require type annotations
 disallow_untyped_defs = true
@@ -42,17 +41,27 @@ check_untyped_defs = true
 strict_equality = true
 show_error_codes = true
 
-[tool.django-stubs]
-django_settings_module = "foodmood.settings"
-
 [tool.poe.tasks]
-mypy = { shell = "cd foodmood && mypy ." }
-mypy-strict = { shell = "cd foodmood && mypy . --strict" }
+# Linting and formatting
+lint = "ruff check foodmood"
+format = "ruff format foodmood"
+format-check = "ruff format --check foodmood"
+
+# Type checking
+mypy = "mypy foodmood"
+mypy-strict = "mypy foodmood --strict"
+
+# Pre-commit
 pre-commit = "pre-commit run --all-files"
+
+# Django management
 startapp  = "python foodmood/manage.py startapp"
+migrate  = "python foodmood/manage.py migrate"
+
+# Testing
 test = "python foodmood/manage.py test foodmood -p 'test*.py' --parallel"
 test-app = "python foodmood/manage.py test -p 'test*.py'"
-test-coverage = { shell = "coverage run --source='.' foodmood/manage.py test foodmood -p 'test*.py' && coverage report" }
+test-coverage = { shell = "coverage run --source='.' foodmood/manage.py test && coverage report && coverage xml" }
 test-coverage-html = { shell = "coverage run --source='.' foodmood/manage.py test foodmood -p 'test*.py' && coverage html" }
 
 [tool.poe.tasks.mydc]
