@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 
 
@@ -16,8 +17,8 @@ class CustomUserCreationForm(UserCreationForm):
         model = User
         fields = ("username", "email", "password1", "password2")
 
-    def save(self, commit=True):
-        user = super().save(commit=False)
+    def save(self, commit: bool = True) -> User:
+        user: User = super().save(commit=False)
         user.email = self.cleaned_data["email"]
         if commit:
             user.save()
@@ -29,7 +30,7 @@ class LoginForm(forms.Form):
     password = forms.CharField(widget=forms.PasswordInput)
 
 
-def register(request):
+def register(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
@@ -48,7 +49,7 @@ def register(request):
     return render(request, "users/register.html", {"form": form})
 
 
-def login_view(request):
+def login_view(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
         form = LoginForm(request.POST)
         if form.is_valid():
@@ -67,7 +68,7 @@ def login_view(request):
     return render(request, "users/login.html", {"form": form})
 
 
-def logout_view(request):
+def logout_view(request: HttpRequest) -> HttpResponse:
     logout(request)
     messages.success(request, "You have been successfully logged out.")
     return redirect("index")
