@@ -16,39 +16,16 @@
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-12">
-            <div class="card shadow-sm">
-                <div class="card-body text-center py-5">
-                    <i class="bi bi-plus-circle-fill display-1 text-primary mb-3"></i>
-                    <h3 class="card-title">Add Your First Meal</h3>
-                    <p class="card-text text-muted">
-                        Start tracking your meals to understand how different foods affect your wellbeing.
-                    </p>
-                    {% if user.is_authenticated %}
-                        <a href="{% url 'meals:create' %}" class="btn btn-primary btn-lg">
-                            <i class="bi bi-plus-lg"></i>
-                            Add Meal
-                        </a>
-                    {% else %}
-                        <p class="text-muted">
-                            <a href="{% url 'users:login' %}">Login</a> to start tracking your meals.
-                        </p>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row mt-4">
-        <div class="col-md-6">
-            <div class="card h-100">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <i class="bi bi-calendar-event"></i>
-                        Recent Meals
-                    </h5>
-                    {% if user.is_authenticated and recent_meals %}
+    {% if user.is_authenticated and recent_meals %}
+        <!-- User has meals - show recent meals with add another button -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="bi bi-calendar-event"></i>
+                            Recent Meals
+                        </h5>
                         <div class="list-group list-group-flush">
                             {% for meal in recent_meals %}
                                 <div class="list-group-item px-0">
@@ -71,36 +48,40 @@
                             {% endfor %}
                         </div>
                         <div class="mt-3">
-                            <a href="{% url 'meals:create' %}" class="btn btn-outline-primary btn-sm">
+                            <a href="{% url 'meals:create' %}" class="btn btn-primary">
                                 <i class="bi bi-plus"></i>
                                 Add Another Meal
                             </a>
                         </div>
-                    {% else %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <!-- User has no meals or is not authenticated - show add first meal -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-body text-center py-5">
+                        <i class="bi bi-plus-circle-fill display-1 text-primary mb-3"></i>
+                        <h3 class="card-title">Add Your First Meal</h3>
                         <p class="card-text text-muted">
-                            {% if user.is_authenticated %}
-                                Your recently logged meals will appear here.
-                            {% else %}
-                                <a href="{% url 'users:login' %}">Login</a> to see your recent meals.
-                            {% endif %}
+                            Start tracking your meals to understand how different foods affect your wellbeing.
                         </p>
-                    {% endif %}
+                        {% if user.is_authenticated %}
+                            <a href="{% url 'meals:create' %}" class="btn btn-primary btn-lg">
+                                <i class="bi bi-plus-lg"></i>
+                                Add Meal
+                            </a>
+                        {% else %}
+                            <p class="text-muted">
+                                <a href="{% url 'users:login' %}">Login</a> to start tracking your meals.
+                            </p>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-6">
-            <div class="card h-100">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <i class="bi bi-graph-up"></i>
-                        Meal Insights
-                    </h5>
-                    <p class="card-text text-muted">
-                        Discover patterns between your meals and mood.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
+    {% endif %}
 </div>
 {% endblock %}
