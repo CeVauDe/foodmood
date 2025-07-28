@@ -36,21 +36,39 @@
                         </div>
 
                         <!-- Date and Time -->
-                        <div class="mb-3">
-                            <label for="{{ form.date_time.id_for_label }}" class="form-label">
-                                Date & Time
-                            </label>
-                            {{ form.date_time }}
-                            {% if form.date_time.help_text %}
-                                <div class="form-text">{{ form.date_time.help_text }}</div>
-                            {% endif %}
-                            {% if form.date_time.errors %}
-                                <div class="text-danger">
-                                    {% for error in form.date_time.errors %}
-                                        <small>{{ error }}</small>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.meal_date.id_for_label }}" class="form-label">
+                                    Date
+                                </label>
+                                {{ form.meal_date }}
+                                {% if form.meal_date.help_text %}
+                                    <div class="form-text">{{ form.meal_date.help_text }}</div>
+                                {% endif %}
+                                {% if form.meal_date.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.meal_date.errors %}
+                                            <small>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.meal_time.id_for_label }}" class="form-label">
+                                    Time
+                                </label>
+                                {{ form.meal_time }}
+                                {% if form.meal_time.help_text %}
+                                    <div class="form-text">{{ form.meal_time.help_text }}</div>
+                                {% endif %}
+                                {% if form.meal_time.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.meal_time.errors %}
+                                            <small>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
                         </div>
 
                         <!-- Recipes -->

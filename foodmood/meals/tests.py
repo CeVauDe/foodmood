@@ -431,9 +431,11 @@ class MealFormTest(TestCase):
 
     def test_meal_form_valid_data(self) -> None:
         """Test MealForm with valid data."""
+        current_time = timezone.now()
         form_data = {
             "name": "Test Meal",
-            "date_time": timezone.now(),
+            "meal_date": current_time.date(),
+            "meal_time": current_time.time(),
             "notes": "Test notes",
         }
         form = MealForm(data=form_data)
@@ -441,9 +443,11 @@ class MealFormTest(TestCase):
 
     def test_meal_form_valid_with_recipes(self) -> None:
         """Test MealForm with recipes selected."""
+        current_time = timezone.now()
         form_data = {
             "name": "Test Meal",
-            "date_time": timezone.now(),
+            "meal_date": current_time.date(),
+            "meal_time": current_time.time(),
             "recipes": [self.recipe.pk],
             "notes": "Test notes",
         }
@@ -456,13 +460,15 @@ class MealFormTest(TestCase):
         form = MealForm(data=form_data)
         self.assertFalse(form.is_valid())
         self.assertIn("name", form.errors)
-        self.assertIn("date_time", form.errors)
+        # Date and time are not required individually since clean() handles defaults
 
     def test_meal_form_empty_name(self) -> None:
         """Test MealForm with empty name."""
+        current_time = timezone.now()
         form_data = {
             "name": "",
-            "date_time": timezone.now(),
+            "meal_date": current_time.date(),
+            "meal_time": current_time.time(),
             "notes": "Test notes",
         }
         form = MealForm(data=form_data)
@@ -471,14 +477,60 @@ class MealFormTest(TestCase):
 
     def test_meal_form_recipes_not_required(self) -> None:
         """Test that recipes field is not required."""
+        current_time = timezone.now()
         form_data = {
             "name": "Test Meal",
-            "date_time": timezone.now(),
+            "meal_date": current_time.date(),
+            "meal_time": current_time.time(),
             "notes": "Test notes",
         }
         form = MealForm(data=form_data)
         self.assertTrue(form.is_valid())
         self.assertFalse(form.fields["recipes"].required)
+
+    def test_meal_form_date_only(self) -> None:
+        """Test MealForm with only date provided (time should default)."""
+        current_time = timezone.now()
+        form_data = {
+            "name": "Test Meal",
+            "meal_date": current_time.date(),
+            # No meal_time provided
+            "notes": "Test notes",
+        }
+        form = MealForm(data=form_data)
+        self.assertTrue(form.is_valid())
+        self.assertIn("date_time", form.cleaned_data)
+
+    def test_meal_form_time_only(self) -> None:
+        """Test MealForm with only time provided (date should default)."""
+        current_time = timezone.now()
+        form_data = {
+            "name": "Test Meal",
+            # No meal_date provided
+            "meal_time": current_time.time(),
+            "notes": "Test notes",
+        }
+        form = MealForm(data=form_data)
+        self.assertTrue(form.is_valid())
+        self.assertIn("date_time", form.cleaned_data)
+
+    def test_meal_form_combines_date_time_correctly(self) -> None:
+        """Test that MealForm correctly combines date and time fields."""
+        test_date = timezone.now().date()
+        test_time = timezone.now().time()
+        form_data = {
+            "name": "Test Meal",
+            "meal_date": test_date,
+            "meal_time": test_time,
+            "notes": "Test notes",
+        }
+        form = MealForm(data=form_data)
+        self.assertTrue(form.is_valid())
+
+        # Check that date_time is properly combined
+        combined_datetime = form.cleaned_data["date_time"]
+        self.assertEqual(combined_datetime.date(), test_date)
+        self.assertEqual(combined_datetime.time(), test_time)
 
 
 class MealViewTest(TestCase):
@@ -537,7 +589,8 @@ class MealViewTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Add New Meal")
         self.assertContains(response, "Meal Name")
-        self.assertContains(response, "Date & Time")
+        self.assertContains(response, "Date")
+        self.assertContains(response, "Time")
 
     def test_create_meal_view_unauthenticated(self) -> None:
         """Test create meal view redirects unauthenticated users."""
@@ -553,7 +606,8 @@ class MealViewTest(TestCase):
         meal_time = timezone.now()
         post_data = {
             "name": "Test Meal",
-            "date_time": meal_time.strftime("%Y-%m-%dT%H:%M"),
+            "meal_date": meal_time.strftime("%Y-%m-%d"),
+            "meal_time": meal_time.strftime("%H:%M"),
             "notes": "Test notes",
         }
 
@@ -571,7 +625,8 @@ class MealViewTest(TestCase):
         meal_time = timezone.now()
         post_data = {
             "name": "Test Meal with Recipe",
-            "date_time": meal_time.strftime("%Y-%m-%dT%H:%M"),
+            "meal_date": meal_time.strftime("%Y-%m-%d"),
+            "meal_time": meal_time.strftime("%H:%M"),
             "recipes": [self.recipe.pk],
             "notes": "Test notes",
         }
@@ -588,7 +643,8 @@ class MealViewTest(TestCase):
         """Test create meal view with invalid POST data."""
         post_data = {
             "name": "",  # Empty name should be invalid
-            "date_time": "",  # Empty date_time should be invalid
+            "meal_date": "",  # Empty meal_date should be invalid
+            "meal_time": "",  # Empty meal_time should be invalid
         }
 
         response = self.client.post(reverse("meals:create"), data=post_data)
