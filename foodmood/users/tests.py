@@ -191,7 +191,7 @@ class UserRegistrationViewTests(TestCase):
 
         # Should show form with errors
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "A user with that username already exists")
+        self.assertContains(response, "Dieser Benutzername ist bereits vergeben.")
 
     def test_registration_with_invalid_data(self) -> None:
         """Test registration with invalid form data"""
@@ -208,7 +208,7 @@ class UserRegistrationViewTests(TestCase):
 
         # Should show form with errors
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Enter a valid email address")
+        self.assertContains(response, "Bitte gültige E-Mail-Adresse eingeben.")
 
 
 class UserLoginViewTests(TestCase):

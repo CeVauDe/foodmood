@@ -5,7 +5,7 @@ from django import forms
 from django.forms import ModelForm
 from django.utils import timezone
 
-from .models import Meal
+from .models import Meal, Recipe
 
 
 class MealForm(ModelForm):
@@ -29,9 +29,24 @@ class MealForm(ModelForm):
             attrs={
                 "class": "form-control",
                 "type": "time",
+                "step": "60",  # Only allow hour and minute selection (no seconds)
             }
         ),
         help_text="What time did you eat this meal?",
+    )
+
+    # Recipe selection dropdown for adding recipes one by one
+    add_recipe = forms.ModelChoiceField(
+        queryset=Recipe.objects.all(),
+        required=False,
+        empty_label="Select a recipe to add...",
+        widget=forms.Select(
+            attrs={
+                "class": "form-control",
+                "id": "add-recipe-select",
+            }
+        ),
+        help_text="Select a recipe to add to this meal",
     )
 
     class Meta:
@@ -44,11 +59,7 @@ class MealForm(ModelForm):
                     "placeholder": "Enter meal name (e.g., Breakfast, Lunch)",
                 }
             ),
-            "recipes": forms.CheckboxSelectMultiple(
-                attrs={
-                    "class": "form-check-input",
-                }
-            ),
+            "recipes": forms.MultipleHiddenInput(),  # Hidden field to store selected recipes
             "notes": forms.Textarea(
                 attrs={
                     "class": "form-control",
@@ -78,15 +89,12 @@ class MealForm(ModelForm):
             self.fields["meal_date"].initial = self.instance.date_time.date()
             self.fields["meal_time"].initial = self.instance.date_time.time()
 
-        # Make recipes optional but provide all available recipes
+        # Make recipes optional
         self.fields["recipes"].required = False
         # Improve field labels and help text
         self.fields[
             "name"
         ].help_text = "Name your meal (e.g., 'Breakfast', 'Lunch', 'Snack')"
-        self.fields[
-            "recipes"
-        ].help_text = "Select any recipes that were part of this meal"
         self.fields["notes"].help_text = "Optional notes about the meal"
 
     def clean(self) -> dict[str, Any]:
