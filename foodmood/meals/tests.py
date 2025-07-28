@@ -4,8 +4,10 @@ from decimal import Decimal
 from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.test import TestCase
+from django.urls import reverse
 from django.utils import timezone
 
+from .forms import MealForm
 from .models import Ingredient, Meal, Recipe, RecipeIngredient
 
 
@@ -413,3 +415,209 @@ class ModelIntegrationTest(TestCase):
 
         # But they can share the same recipes and ingredients
         self.assertEqual(meal1.recipes.first(), meal2.recipes.first())
+
+
+class MealFormTest(TestCase):
+    """Test cases for the MealForm."""
+
+    def setUp(self) -> None:
+        """Set up test data."""
+        self.user = User.objects.create_user(
+            username="testuser", email="test@example.com", password="testpass123"
+        )
+        self.ingredient = Ingredient.objects.create(name="Test Ingredient")
+        self.recipe = Recipe.objects.create(name="Test Recipe")
+        RecipeIngredient.objects.create(recipe=self.recipe, ingredient=self.ingredient)
+
+    def test_meal_form_valid_data(self) -> None:
+        """Test MealForm with valid data."""
+        form_data = {
+            "name": "Test Meal",
+            "date_time": timezone.now(),
+            "notes": "Test notes",
+        }
+        form = MealForm(data=form_data)
+        self.assertTrue(form.is_valid())
+
+    def test_meal_form_valid_with_recipes(self) -> None:
+        """Test MealForm with recipes selected."""
+        form_data = {
+            "name": "Test Meal",
+            "date_time": timezone.now(),
+            "recipes": [self.recipe.pk],
+            "notes": "Test notes",
+        }
+        form = MealForm(data=form_data)
+        self.assertTrue(form.is_valid())
+
+    def test_meal_form_missing_required_fields(self) -> None:
+        """Test MealForm with missing required fields."""
+        form_data = {"notes": "Test notes"}
+        form = MealForm(data=form_data)
+        self.assertFalse(form.is_valid())
+        self.assertIn("name", form.errors)
+        self.assertIn("date_time", form.errors)
+
+    def test_meal_form_empty_name(self) -> None:
+        """Test MealForm with empty name."""
+        form_data = {
+            "name": "",
+            "date_time": timezone.now(),
+            "notes": "Test notes",
+        }
+        form = MealForm(data=form_data)
+        self.assertFalse(form.is_valid())
+        self.assertIn("name", form.errors)
+
+    def test_meal_form_recipes_not_required(self) -> None:
+        """Test that recipes field is not required."""
+        form_data = {
+            "name": "Test Meal",
+            "date_time": timezone.now(),
+            "notes": "Test notes",
+        }
+        form = MealForm(data=form_data)
+        self.assertTrue(form.is_valid())
+        self.assertFalse(form.fields["recipes"].required)
+
+
+class MealViewTest(TestCase):
+    """Test cases for meal views."""
+
+    def setUp(self) -> None:
+        """Set up test data."""
+        self.user = User.objects.create_user(
+            username="testuser", email="test@example.com", password="testpass123"
+        )
+        self.client.login(username="testuser", password="testpass123")
+
+        self.ingredient = Ingredient.objects.create(name="Test Ingredient")
+        self.recipe = Recipe.objects.create(name="Test Recipe")
+        RecipeIngredient.objects.create(recipe=self.recipe, ingredient=self.ingredient)
+
+    def test_meals_index_view_authenticated(self) -> None:
+        """Test meals index view for authenticated user."""
+        response = self.client.get(reverse("meals:index"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Meals")
+        self.assertContains(response, "Add Meal")
+
+    def test_meals_index_view_unauthenticated(self) -> None:
+        """Test meals index view for unauthenticated user."""
+        self.client.logout()
+        response = self.client.get(reverse("meals:index"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Meals")
+        self.assertContains(response, "Login")
+
+    def test_meals_index_view_with_recent_meals(self) -> None:
+        """Test meals index view shows recent meals."""
+        # Create some meals
+        Meal.objects.create(
+            name="Breakfast",
+            date_time=timezone.now() - timedelta(hours=1),
+            user=self.user,
+            notes="Morning meal",
+        )
+        Meal.objects.create(
+            name="Lunch",
+            date_time=timezone.now(),
+            user=self.user,
+        )
+
+        response = self.client.get(reverse("meals:index"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Breakfast")
+        self.assertContains(response, "Lunch")
+        self.assertContains(response, "Morning meal")
+
+    def test_create_meal_view_authenticated_get(self) -> None:
+        """Test create meal view GET request for authenticated user."""
+        response = self.client.get(reverse("meals:create"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Add New Meal")
+        self.assertContains(response, "Meal Name")
+        self.assertContains(response, "Date & Time")
+
+    def test_create_meal_view_unauthenticated(self) -> None:
+        """Test create meal view redirects unauthenticated users."""
+        self.client.logout()
+        response = self.client.get(reverse("meals:create"))
+        self.assertEqual(response.status_code, 302)
+        # Check that it redirects to a login URL (Django default is /accounts/login/)
+        location = response.get("Location", "")
+        self.assertTrue(location.startswith("/accounts/login/"))
+
+    def test_create_meal_view_valid_post(self) -> None:
+        """Test create meal view with valid POST data."""
+        meal_time = timezone.now()
+        post_data = {
+            "name": "Test Meal",
+            "date_time": meal_time.strftime("%Y-%m-%dT%H:%M"),
+            "notes": "Test notes",
+        }
+
+        response = self.client.post(reverse("meals:create"), data=post_data)
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse("meals:index"))
+
+        # Check meal was created
+        meal = Meal.objects.get(name="Test Meal")
+        self.assertEqual(meal.user, self.user)
+        self.assertEqual(meal.notes, "Test notes")
+
+    def test_create_meal_view_with_recipes(self) -> None:
+        """Test create meal view with recipes selected."""
+        meal_time = timezone.now()
+        post_data = {
+            "name": "Test Meal with Recipe",
+            "date_time": meal_time.strftime("%Y-%m-%dT%H:%M"),
+            "recipes": [self.recipe.pk],
+            "notes": "Test notes",
+        }
+
+        response = self.client.post(reverse("meals:create"), data=post_data)
+        self.assertEqual(response.status_code, 302)
+
+        # Check meal was created with recipe
+        meal = Meal.objects.get(name="Test Meal with Recipe")
+        self.assertEqual(meal.recipes.count(), 1)
+        self.assertIn(self.recipe, meal.recipes.all())
+
+    def test_create_meal_view_invalid_post(self) -> None:
+        """Test create meal view with invalid POST data."""
+        post_data = {
+            "name": "",  # Empty name should be invalid
+            "date_time": "",  # Empty date_time should be invalid
+        }
+
+        response = self.client.post(reverse("meals:create"), data=post_data)
+        self.assertEqual(response.status_code, 200)  # Should stay on form page
+        self.assertContains(response, "Add New Meal")
+
+        # Check no meal was created
+        self.assertEqual(Meal.objects.count(), 0)
+
+    def test_meals_index_view_user_isolation(self) -> None:
+        """Test that users only see their own meals."""
+        # Create another user and meal
+        other_user = User.objects.create_user(
+            username="otheruser", email="other@example.com", password="testpass123"
+        )
+        Meal.objects.create(
+            name="Other User Meal",
+            date_time=timezone.now(),
+            user=other_user,
+        )
+
+        # Create meal for current user
+        Meal.objects.create(
+            name="My Meal",
+            date_time=timezone.now(),
+            user=self.user,
+        )
+
+        response = self.client.get(reverse("meals:index"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "My Meal")
+        self.assertNotContains(response, "Other User Meal")

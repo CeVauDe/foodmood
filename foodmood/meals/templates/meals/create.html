@@ -1,0 +1,116 @@
+{% extends "layout.html" %}
+
+{% block title %}Add Meal - FoodMood{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">
+                        <i class="bi bi-plus-circle"></i>
+                        Add New Meal
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <!-- Meal Name -->
+                        <div class="mb-3">
+                            <label for="{{ form.name.id_for_label }}" class="form-label">
+                                Meal Name
+                            </label>
+                            {{ form.name }}
+                            {% if form.name.help_text %}
+                                <div class="form-text">{{ form.name.help_text }}</div>
+                            {% endif %}
+                            {% if form.name.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.name.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Date and Time -->
+                        <div class="mb-3">
+                            <label for="{{ form.date_time.id_for_label }}" class="form-label">
+                                Date & Time
+                            </label>
+                            {{ form.date_time }}
+                            {% if form.date_time.help_text %}
+                                <div class="form-text">{{ form.date_time.help_text }}</div>
+                            {% endif %}
+                            {% if form.date_time.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.date_time.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Recipes -->
+                        <div class="mb-3">
+                            <label class="form-label">Recipes</label>
+                            {% if form.recipes %}
+                                <div class="border rounded p-3">
+                                    {{ form.recipes }}
+                                </div>
+                                {% if form.recipes.help_text %}
+                                    <div class="form-text">{{ form.recipes.help_text }}</div>
+                                {% endif %}
+                            {% else %}
+                                <div class="alert alert-info">
+                                    <i class="bi bi-info-circle"></i>
+                                    No recipes available yet. You can still add your meal and associate recipes later.
+                                </div>
+                            {% endif %}
+                            {% if form.recipes.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.recipes.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Notes -->
+                        <div class="mb-3">
+                            <label for="{{ form.notes.id_for_label }}" class="form-label">
+                                Notes
+                            </label>
+                            {{ form.notes }}
+                            {% if form.notes.help_text %}
+                                <div class="form-text">{{ form.notes.help_text }}</div>
+                            {% endif %}
+                            {% if form.notes.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.notes.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Submit Buttons -->
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'meals:index' %}" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i>
+                                Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-lg"></i>
+                                Add Meal
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
