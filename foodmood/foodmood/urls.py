@@ -23,6 +23,7 @@ from . import views
 
 urlpatterns: list[URLResolver | URLPattern] = [
     path("", views.index, name="index"),
+    path("meals/", include("meals.urls")),
     path("users/", include("users.urls")),
     path("admin/", admin.site.urls),
 ]

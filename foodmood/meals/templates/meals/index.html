@@ -1,0 +1,66 @@
+{% extends "layout.html" %}
+
+{% block title %}Meals - FoodMood{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="display-4 text-center mb-4">
+                <i class="bi bi-egg-fried"></i>
+                Meals
+            </h1>
+            <p class="lead text-center text-muted mb-5">
+                Track your meals and discover how they affect your mood
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body text-center py-5">
+                    <i class="bi bi-plus-circle-fill display-1 text-primary mb-3"></i>
+                    <h3 class="card-title">Add Your First Meal</h3>
+                    <p class="card-text text-muted">
+                        Start tracking your meals to understand how different foods affect your wellbeing.
+                    </p>
+                    <button class="btn btn-primary btn-lg" disabled>
+                        <i class="bi bi-plus-lg"></i>
+                        Add Meal (Coming Soon)
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-calendar-event"></i>
+                        Recent Meals
+                    </h5>
+                    <p class="card-text text-muted">
+                        Your recently logged meals will appear here.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-graph-up"></i>
+                        Meal Insights
+                    </h5>
+                    <p class="card-text text-muted">
+                        Discover patterns between your meals and mood.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
