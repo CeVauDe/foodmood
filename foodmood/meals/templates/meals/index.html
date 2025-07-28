@@ -25,10 +25,16 @@
                     <p class="card-text text-muted">
                         Start tracking your meals to understand how different foods affect your wellbeing.
                     </p>
-                    <button class="btn btn-primary btn-lg" disabled>
-                        <i class="bi bi-plus-lg"></i>
-                        Add Meal (Coming Soon)
-                    </button>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'meals:create' %}" class="btn btn-primary btn-lg">
+                            <i class="bi bi-plus-lg"></i>
+                            Add Meal
+                        </a>
+                    {% else %}
+                        <p class="text-muted">
+                            <a href="{% url 'users:login' %}">Login</a> to start tracking your meals.
+                        </p>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -42,9 +48,43 @@
                         <i class="bi bi-calendar-event"></i>
                         Recent Meals
                     </h5>
-                    <p class="card-text text-muted">
-                        Your recently logged meals will appear here.
-                    </p>
+                    {% if user.is_authenticated and recent_meals %}
+                        <div class="list-group list-group-flush">
+                            {% for meal in recent_meals %}
+                                <div class="list-group-item px-0">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">{{ meal.name }}</h6>
+                                        <small class="text-muted">{{ meal.date_time|date:"M d, Y H:i" }}</small>
+                                    </div>
+                                    {% if meal.notes %}
+                                        <p class="mb-1 text-muted">{{ meal.notes|truncatewords:10 }}</p>
+                                    {% endif %}
+                                    {% if meal.recipes.all %}
+                                        <small class="text-muted">
+                                            Recipes:
+                                            {% for recipe in meal.recipes.all %}
+                                                {{ recipe.name }}{% if not forloop.last %}, {% endif %}
+                                            {% endfor %}
+                                        </small>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="mt-3">
+                            <a href="{% url 'meals:create' %}" class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-plus"></i>
+                                Add Another Meal
+                            </a>
+                        </div>
+                    {% else %}
+                        <p class="card-text text-muted">
+                            {% if user.is_authenticated %}
+                                Your recently logged meals will appear here.
+                            {% else %}
+                                <a href="{% url 'users:login' %}">Login</a> to see your recent meals.
+                            {% endif %}
+                        </p>
+                    {% endif %}
                 </div>
             </div>
         </div>
