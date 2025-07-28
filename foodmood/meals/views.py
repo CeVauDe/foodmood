@@ -27,7 +27,19 @@ def index(request: HttpRequest) -> HttpResponse:
 def create_meal(request: HttpRequest) -> HttpResponse:
     """View for creating a new meal."""
     if request.method == "POST":
-        form = MealForm(request.POST)
+        # Process the recipes field manually since it's coming as comma-separated IDs
+        post_data = request.POST.copy()
+
+        # Handle the recipes field - convert comma-separated IDs to list
+        if "recipes" in post_data and post_data["recipes"]:
+            recipe_ids = [
+                id.strip() for id in post_data["recipes"].split(",") if id.strip()
+            ]
+            post_data.setlist("recipes", recipe_ids)
+        else:
+            post_data.setlist("recipes", [])
+
+        form = MealForm(post_data)
         if form.is_valid():
             meal = form.save(commit=False)
             meal.user = request.user
