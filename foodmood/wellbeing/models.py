@@ -140,48 +140,50 @@ class WellbeingEntry(models.Model):
         """
         Validate that entries match their parameter type and constraints
         """
+        if not self.parameter:
+            raise ValidationError({"parameter": "Parameter must be set."})
+
         # Ensure user matches between entry and parameter
-        if self.parameter and self.parameter.user != self.user:
+        if self.parameter.user != self.user:
             raise ValidationError(
                 {"parameter": "Parameter must belong to the same user as the entry."}
             )
 
-        if self.parameter:
-            if self.parameter.type == WellbeingParameter.ParameterType.CATEGORIC:
-                # Categoric parameter validation
-                if not self.categoric_value:
-                    raise ValidationError(
-                        {
-                            "categoric_value": "Categoric parameters must have a categoric_value."
-                        }
-                    )
-                if self.numeric_value is not None:
-                    raise ValidationError(
-                        {
-                            "numeric_value": "Categoric parameters should not have a numeric_value."
-                        }
-                    )
-                # Check if the value is in the allowed options
-                options = self.parameter.options
-                if options is not None and isinstance(options, list):  # type: ignore[unreachable]
-                    if self.categoric_value not in options:  # type: ignore[unreachable]
-                        raise ValidationError(
-                            {
-                                "categoric_value": f"Value must be one of: {', '.join(options)}"
-                            }
-                        )
+        if self.parameter.type == WellbeingParameter.ParameterType.CATEGORIC:
+            self.clean_catecoric_type()
 
-            elif self.parameter.type == WellbeingParameter.ParameterType.NUMERIC:
-                # Numeric parameter validation
-                if self.numeric_value is None:
-                    raise ValidationError(
-                        {
-                            "numeric_value": "Numeric parameters must have a numeric_value."
-                        }
-                    )
-                if self.categoric_value:
-                    raise ValidationError(
-                        {
-                            "categoric_value": "Numeric parameters should not have a categoric_value."
-                        }
-                    )
+        elif self.parameter.type == WellbeingParameter.ParameterType.NUMERIC:
+            self.clean_numeric_type()
+
+    def clean_catecoric_type(self) -> None:
+        # Categoric parameter validation
+        if not self.categoric_value:
+            raise ValidationError(
+                {"categoric_value": "Categoric parameters must have a categoric_value."}
+            )
+        if self.numeric_value is not None:
+            raise ValidationError(
+                {
+                    "numeric_value": "Categoric parameters should not have a numeric_value."
+                }
+            )
+            # Check if the value is in the allowed options
+        options = self.parameter.options
+        if options is not None and isinstance(options, list):  # type: ignore[unreachable]
+            if self.categoric_value not in options:  # type: ignore[unreachable]
+                raise ValidationError(
+                    {"categoric_value": f"Value must be one of: {', '.join(options)}"}
+                )
+
+    def clean_numeric_type(self) -> None:
+        # Numeric parameter validation
+        if self.numeric_value is None:
+            raise ValidationError(
+                {"numeric_value": "Numeric parameters must have a numeric_value."}
+            )
+        if self.categoric_value:
+            raise ValidationError(
+                {
+                    "categoric_value": "Numeric parameters should not have a categoric_value."
+                }
+            )
