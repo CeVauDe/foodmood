@@ -103,7 +103,6 @@ class WellbeingEntry(models.Model):
     )
     categoric_value = models.CharField(
         max_length=200,
-        null=True,
         blank=True,
         help_text="The value, if it is a categoric parameter",
     )
