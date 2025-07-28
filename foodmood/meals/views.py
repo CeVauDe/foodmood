@@ -36,6 +36,12 @@ def create_meal(request: HttpRequest) -> HttpResponse:
             return redirect("meals:index")
     else:
         # Pre-populate with current time
-        form = MealForm(initial={"date_time": timezone.now()})
+        current_time = timezone.now()
+        form = MealForm(
+            initial={
+                "meal_date": current_time.date(),
+                "meal_time": current_time.time(),
+            }
+        )
 
     return render(request, "meals/create.html", {"form": form, "title": "Add Meal"})
