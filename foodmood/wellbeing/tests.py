@@ -230,7 +230,7 @@ class WellbeingEntryModelTest(TestCase):
         self.assertEqual(entry.user, self.user1)
         self.assertEqual(entry.parameter, self.numeric_param)
         self.assertEqual(entry.numeric_value, Decimal("7.5"))
-        self.assertIsNone(entry.categoric_value)
+        self.assertEqual(entry.categoric_value, "")
         self.assertEqual(entry.notes, "Good energy today")
 
     def test_str_representation(self) -> None:
