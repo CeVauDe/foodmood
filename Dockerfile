@@ -30,7 +30,7 @@ COPY pyproject.toml poetry.lock ./
 # Configure Poetry and install dependencies
 RUN poetry config virtualenvs.create false \
     && poetry install --only=main --no-root \
-    && rm -rf $POETRY_CACHE_DIR
+    && rm -rf "$POETRY_CACHE_DIR"
 
 # Copy only the necessary application files
 COPY foodmood/ ./foodmood/
