@@ -3,8 +3,9 @@
 
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
-![Tests](https://github.com/CeVauDe/foodmood/workflows/Tests/badge.svg)
+[![Tests](https://github.com/CeVauDe/foodmood/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/CeVauDe/foodmood/actions/workflows/test.yml)
 ![MyPy](https://img.shields.io/badge/mypy-checked-blue.svg)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=CeVauDe_foodmood&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=CeVauDe_foodmood)
 
 FoodMood is a webpage that lets you track your meals and your wellbeing to look for correlations.
 
