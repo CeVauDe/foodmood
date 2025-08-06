@@ -55,6 +55,7 @@ pre-commit = "pre-commit run --all-files"
 # Django management
 startapp  = "python foodmood/manage.py startapp"
 migrate  = "python foodmood/manage.py migrate"
+makemigrations  = "python foodmood/manage.py makemigrations"
 
 # Testing
 test = "python foodmood/manage.py test foodmood -p 'test*.py'"
