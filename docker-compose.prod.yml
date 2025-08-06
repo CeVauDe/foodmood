@@ -4,10 +4,7 @@ services:
     environment:
       - DJANGO_DEBUG=false
     volumes: []  # Remove development volume mounts
-    command: >
-      sh -c "python foodmood/manage.py collectstatic --noinput &&
-             python foodmood/manage.py migrate &&
-             python foodmood/manage.py runserver 0.0.0.0:8000"
+    command: gunicorn --config ../gunicorn.conf.py foodmood.wsgi:application
 
   db:
     restart: always
