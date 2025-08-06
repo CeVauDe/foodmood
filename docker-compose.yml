@@ -1,30 +1,23 @@
 services:
   web:
-    build: .
+    image: cevaude/foodmood:latest
     ports:
-      - "8000:8000"
-    volumes:
-      - .:/app
-      # - /app/.venv  # Exclude virtual environment from bind mount
+      - "${PROD_PORT}:8000"
+    restart: always
     environment:
-      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY:-your-secret-key-here}
-      - DJANGO_DEBUG=${DJANGO_DEBUG:-true}
-    depends_on:
-      - db
-    restart: unless-stopped
-    command: python foodmood/manage.py runserver 0.0.0.0:8000
+      - DJANGO_DEBUG=false
+      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
 
   db:
     image: postgres:16-alpine
-    volumes:
-      - postgres_data:/var/lib/postgresql/data/
+    restart: always
     environment:
-      - POSTGRES_DB=foodmood
-      - POSTGRES_USER=foodmood
-      - POSTGRES_PASSWORD=foodmood
-    ports:
-      - "5432:5432"
-    restart: unless-stopped
+      - POSTGRES_DB=${POSTGRES_DB:-foodmood}
+      - POSTGRES_USER=${POSTGRES_USER:-foodmood}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - db_foodmood:/var/lib/postgresql/data/
 
 volumes:
-  postgres_data:
+  db_foodmood:
