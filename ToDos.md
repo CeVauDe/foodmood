@@ -35,16 +35,16 @@ This document outlines the tasks needed to make the FoodMood Django project prod
 - [x] Add Gunicorn configuration file (`gunicorn.conf.py`)
 
 ### 4. Reverse Proxy Configuration
-- [ ] Set up Nginx as reverse proxy in front of Django
-- [ ] Configure Nginx for static file serving
+- [x] Set up Nginx as reverse proxy in front of Django
+- [x] Configure Nginx for static file serving
 - [ ] Set up SSL/TLS termination with Let's Encrypt
-- [ ] Add Nginx configuration files
+- [x] Add Nginx configuration files
 
 ### 5. Static Files Management
-- [ ] Review and optimize `STATICFILES_DIRS` configuration
-- [ ] Implement proper static file collection strategy
+- [x] Review and optimize `STATICFILES_DIRS` configuration
+- [x] Implement proper static file collection strategy
 - [ ] Consider CDN integration for static assets
-- [ ] Add whitenoise for static file serving if not using Nginx
+- [x] Add whitenoise for static file serving if not using Nginx
 
 ## 💾 Database & Performance Tasks (MEDIUM PRIORITY)
 
