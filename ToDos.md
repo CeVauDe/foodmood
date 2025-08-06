@@ -29,10 +29,10 @@ This document outlines the tasks needed to make the FoodMood Django project prod
 ## 🚀 Web Server & Deployment Tasks (HIGH PRIORITY)
 
 ### 3. WSGI/ASGI Server Setup
-- [ ] Install and configure Gunicorn as production WSGI server
-- [ ] Configure proper worker processes and memory settings
-- [ ] Update `docker-compose.prod.yml` to use Gunicorn instead of `runserver`
-- [ ] Add Gunicorn configuration file (`gunicorn.conf.py`)
+- [x] Install and configure Gunicorn as production WSGI server
+- [x] Configure proper worker processes and memory settings
+- [x] Update `docker-compose.prod.yml` to use Gunicorn instead of `runserver`
+- [x] Add Gunicorn configuration file (`gunicorn.conf.py`)
 
 ### 4. Reverse Proxy Configuration
 - [ ] Set up Nginx as reverse proxy in front of Django
