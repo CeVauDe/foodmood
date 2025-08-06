@@ -1,0 +1,25 @@
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+      # - /app/.venv  # Exclude virtual environment from bind mount
+    environment:
+      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY:-your-secret-key-here}
+      - DJANGO_DEBUG=${DJANGO_DEBUG:-true}
+    depends_on:
+      - db
+    restart: unless-stopped
+    command: python foodmood/manage.py runserver 0.0.0.0:8000
+
+  db:
+
+    environment:
+      - POSTGRES_DB=foodmood
+      - POSTGRES_USER=foodmood
+      - POSTGRES_PASSWORD=foodmood
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
