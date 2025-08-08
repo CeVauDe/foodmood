@@ -1,0 +1,11 @@
+services:
+  web:
+    build: .
+    env_file:
+      - .env.docker
+
+
+  db:
+    environment: []
+    env_file:
+      - .env.docker
