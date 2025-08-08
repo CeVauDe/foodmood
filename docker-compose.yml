@@ -2,7 +2,7 @@ services:
   web:
     image: cevaude/foodmood:latest
     ports:
-      - "${PROD_PORT}:8000"
+      - "${PROD_PORT:-8000}:8000"
     restart: always
     environment: []
 
