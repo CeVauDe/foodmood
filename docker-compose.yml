@@ -5,13 +5,8 @@ services:
       - "${PROD_PORT:-8000}:8000"
     restart: always
     environment: []
-
-  db:
-    image: postgres:17-alpine
-    restart: always
-    environment: []
     volumes:
-      - db_foodmood:/var/lib/postgresql/data/
+      - db_foodmood:/var/lib/sqlite/data/
 
 volumes:
   db_foodmood:

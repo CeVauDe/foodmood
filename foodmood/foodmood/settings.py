@@ -93,25 +93,14 @@ WSGI_APPLICATION = "foodmood.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# Use PostgreSQL in Docker, SQLite locally
-if os.environ.get("POSTGRES_DB"):
-    DATABASES: dict[str, dict[str, Any]] = {
-        "default": {
-            "ENGINE": "django.db.backends.postgresql",
-            "NAME": os.environ.get("POSTGRES_DB", "foodmood"),
-            "USER": os.environ.get("POSTGRES_USER", "foodmood"),
-            "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "foodmood"),
-            "HOST": os.environ.get("POSTGRES_HOST", "db"),
-            "PORT": os.environ.get("POSTGRES_PORT", "5432"),
-        }
+DB_PATH_SQLITE: Path = Path(os.environ.get("DB_PATH_SQLITE", BASE_DIR / "db.sqlite3"))
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": DB_PATH_SQLITE,
     }
-else:
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
-        }
-    }
+}
 
 
 # Password validation

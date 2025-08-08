@@ -3,9 +3,6 @@ services:
     build: .
     env_file:
       - .env.docker
-
-
-  db:
-    environment: []
-    env_file:
-      - .env.docker
+    volumes:
+      # Bind-mount the host dir containing db.sqlite3
+      - ./db:/var/lib/sqlite/data
