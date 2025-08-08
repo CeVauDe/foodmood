@@ -4,7 +4,14 @@ services:
     ports:
       - "${PROD_PORT:-8000}:8000"
     restart: always
-    environment: []
+    environment:
+      - "DJANGO_SECRET_KEY:${DJANGO_SECRET_KEY}"
+      - "DJANGO_DEBUG:${DJANGO_DEBUG:-false}"
+      - "ALLOWED_HOSTS:${ALLOWED_HOSTS:-localhost}"
+      - "GUNICORN_WORKERS:${GUNICORN_WORKERS:-4}"
+      - "GUNICORN_TIMEOUT:${GUNICORN_TIMEOUT:-30}"
+      - "GUNICORN_KEEPALIVE:${GUNICORN_KEEPALIVE:-2}"
+      - "GUNICORN_MAX_REQUESTS:${GUNICORN_MAX_REQUESTS:-1000}"
     volumes:
       - db_foodmood:/var/lib/sqlite/data/
 
