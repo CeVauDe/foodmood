@@ -8,17 +8,6 @@ services:
     environment:
       - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY:-your-secret-key-here}
       - DJANGO_DEBUG=true
-    depends_on:
-      - db
+
     restart: unless-stopped
     command: python manage.py runserver 0.0.0.0:8000
-
-  db:
-
-    environment:
-      - POSTGRES_DB=foodmood
-      - POSTGRES_USER=foodmood
-      - POSTGRES_PASSWORD=foodmood
-    ports:
-      - "5432:5432"
-    restart: unless-stopped
