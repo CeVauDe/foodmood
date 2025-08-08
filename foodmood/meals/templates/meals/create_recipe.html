@@ -1,0 +1,243 @@
+{% extends "layout.html" %}
+
+{% block title %}Add Recipe - FoodMood{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">
+                        <i class="bi bi-plus-circle"></i>
+                        Add New Recipe
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <form method="post" id="recipe-form">
+                        {% csrf_token %}
+
+                        <!-- Recipe Name -->
+                        <div class="mb-3">
+                            <label for="{{ form.name.id_for_label }}" class="form-label">
+                                Recipe Name
+                            </label>
+                            {{ form.name }}
+                            {% if form.name.help_text %}
+                                <div class="form-text">{{ form.name.help_text }}</div>
+                            {% endif %}
+                            {% if form.name.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.name.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Ingredients Section -->
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <i class="bi bi-list-ul"></i>
+                                Ingredients
+                            </label>
+
+                            <!-- Ingredients List Table -->
+                            <div class="mb-3">
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-striped" id="ingredients-table">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Ingredient</th>
+                                                <th>Weight (g)</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="ingredients-list">
+                                            <!-- Dynamic ingredients will be added here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div id="no-ingredients-message" class="text-muted text-center py-3">
+                                    No ingredients added yet. Use the form below to add ingredients.
+                                </div>
+                            </div>
+
+                            <!-- Add Ingredient Form -->
+                            <div class="card border-light bg-light">
+                                <div class="card-body">
+                                    <h6 class="card-title">Add Ingredient</h6>
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label for="{{ form.add_ingredient.id_for_label }}" class="form-label">
+                                                Select Ingredient
+                                            </label>
+                                            {{ form.add_ingredient }}
+                                            {% if form.add_ingredient.help_text %}
+                                                <div class="form-text">{{ form.add_ingredient.help_text }}</div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="{{ form.ingredient_weight.id_for_label }}" class="form-label">
+                                                Weight (grams)
+                                            </label>
+                                            {{ form.ingredient_weight }}
+                                            {% if form.ingredient_weight.help_text %}
+                                                <div class="form-text">{{ form.ingredient_weight.help_text }}</div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-md-2 d-flex align-items-end">
+                                            <button type="button" id="add-ingredient-btn" class="btn btn-primary w-100">
+                                                <i class="bi bi-plus"></i>
+                                                Add
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Hidden ingredients data field -->
+                        {{ form.ingredients_data }}
+                        {% if form.ingredients_data.errors %}
+                            <div class="text-danger mb-3">
+                                {% for error in form.ingredients_data.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <!-- Notes -->
+                        <div class="mb-3">
+                            <label for="{{ form.notes.id_for_label }}" class="form-label">
+                                Recipe Notes
+                            </label>
+                            {{ form.notes }}
+                            {% if form.notes.help_text %}
+                                <div class="form-text">{{ form.notes.help_text }}</div>
+                            {% endif %}
+                            {% if form.notes.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.notes.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'meals:index' %}" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i>
+                                Cancel
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-check-lg"></i>
+                                Create Recipe
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Ingredients management
+    let ingredientsList = [];
+
+    const ingredientsTable = document.getElementById('ingredients-table');
+    const ingredientsList_tbody = document.getElementById('ingredients-list');
+    const noIngredientsMessage = document.getElementById('no-ingredients-message');
+    const addIngredientBtn = document.getElementById('add-ingredient-btn');
+    const ingredientSelect = document.getElementById('add-ingredient-select');
+    const weightInput = document.getElementById('ingredient-weight-input');
+    const ingredientsDataInput = document.getElementById('ingredients-data');
+
+    function updateIngredientsDisplay() {
+        // Clear current list
+        ingredientsList_tbody.innerHTML = '';
+
+        if (ingredientsList.length === 0) {
+            ingredientsTable.style.display = 'none';
+            noIngredientsMessage.style.display = 'block';
+        } else {
+            ingredientsTable.style.display = 'table';
+            noIngredientsMessage.style.display = 'none';
+
+            ingredientsList.forEach((ingredient, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${ingredient.name}</td>
+                    <td>${ingredient.weight ? ingredient.weight + 'g' : 'Not specified'}</td>
+                    <td>
+                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeIngredient(${index})">
+                            <i class="bi bi-trash"></i>
+                            Remove
+                        </button>
+                    </td>
+                `;
+                ingredientsList_tbody.appendChild(row);
+            });
+        }
+
+        // Update hidden field
+        ingredientsDataInput.value = JSON.stringify(ingredientsList);
+    }
+
+    function addIngredient() {
+        const selectedOption = ingredientSelect.selectedOptions[0];
+        const weight = weightInput.value;
+
+        if (!selectedOption || selectedOption.value === '') {
+            alert('Please select an ingredient');
+            return;
+        }
+
+        const ingredientId = selectedOption.value;
+        const ingredientName = selectedOption.text;
+
+        // Check if ingredient already exists
+        if (ingredientsList.some(ing => ing.id === ingredientId)) {
+            alert('This ingredient is already added to the recipe');
+            return;
+        }
+
+        // Add ingredient to list
+        ingredientsList.push({
+            id: ingredientId,
+            name: ingredientName,
+            weight: weight || null
+        });
+
+        // Reset form
+        ingredientSelect.selectedIndex = 0;
+        weightInput.value = '';
+
+        updateIngredientsDisplay();
+    }
+
+    // Make removeIngredient globally available
+    window.removeIngredient = function(index) {
+        ingredientsList.splice(index, 1);
+        updateIngredientsDisplay();
+    };
+
+    // Event listeners
+    addIngredientBtn.addEventListener('click', addIngredient);
+
+    // Allow adding ingredient with Enter key in weight field
+    weightInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            addIngredient();
+        }
+    });
+
+    // Initialize display
+    updateIngredientsDisplay();
+});
+</script>
+{% endblock %}
