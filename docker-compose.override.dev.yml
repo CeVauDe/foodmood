@@ -5,10 +5,9 @@ services:
       - "8000:8000"
     volumes:
       - .:/app
-      # - /app/.venv  # Exclude virtual environment from bind mount
     environment:
       - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY:-your-secret-key-here}
-      - DJANGO_DEBUG=${DJANGO_DEBUG:-true}
+      - DJANGO_DEBUG=true
     depends_on:
       - db
     restart: unless-stopped

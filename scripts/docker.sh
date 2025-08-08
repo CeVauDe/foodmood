@@ -7,19 +7,19 @@ set -e
 case "$1" in
     "dev")
         echo "🚀 Starting development environment..."
-        docker compose up --build
+        docker compose -f docker-compose.yml -f docker-compose.override.dev.yml up --build
         ;;
     "dev-d")
         echo "🚀 Starting development environment in background..."
-        docker compose up -d --build
+        docker compose -f docker-compose.yml -f docker-compose.override.dev.yml up -d --build
         ;;
     "prod")
         echo "🚀 Starting production environment..."
-        docker compose -f docker-compose.yml -f docker-compose.prod.yml up --build
+        docker compose -f docker-compose.yml -f docker-compose.override.local.yml up --build
         ;;
     "prod-d")
         echo "🚀 Starting production environment in background..."
-        docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+        docker compose -f docker-compose.yml -f docker-compose.override.local.yml up -d --build
         ;;
     "stop")
         echo "🛑 Stopping all services..."
