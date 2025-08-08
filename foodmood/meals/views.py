@@ -5,7 +5,7 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 from django.utils import timezone
 
-from .forms import MealForm
+from .forms import MealForm, RecipeForm
 from .models import Meal
 
 # Create your views here.
@@ -57,3 +57,19 @@ def create_meal(request: HttpRequest) -> HttpResponse:
         )
 
     return render(request, "meals/create.html", {"form": form, "title": "Add Meal"})
+
+
+@login_required
+def create_recipe(request: HttpRequest) -> HttpResponse:
+    """View for creating a new recipe."""
+    if request.method == "POST":
+        form = RecipeForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("meals:index")  # Redirect to meals index for now
+    else:
+        form = RecipeForm()
+
+    return render(
+        request, "meals/create_recipe.html", {"form": form, "title": "Add Recipe"}
+    )
