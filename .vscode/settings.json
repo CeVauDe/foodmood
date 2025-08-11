@@ -1,0 +1,7 @@
+{
+    "python.envFile": "${workspaceFolder}/.env",
+    "python.testing.unittestEnabled": true,
+    "python.testing.unittestArgs": [],
+    "python.testing.pytestEnabled": false,
+    "python.testing.cwd": "./foodmood"
+}
