@@ -1,5 +1,6 @@
 # Create your models here.
 
+from django.core.exceptions import ValidationError
 from django.db import models
 
 
@@ -19,3 +20,8 @@ class Edible(models.Model):
 
     def __str__(self) -> str:
         return f"{self.name} ({self.ingredients.count()} ingredients)"
+
+    def clean(self) -> None:
+        ingredients = self.ingredients.all()
+        if self in ingredients:
+            raise ValidationError("An edible cannot have itself as ingredient")
