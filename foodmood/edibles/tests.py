@@ -30,6 +30,6 @@ class IngredientsTestCase(TestCase):
         dressing = Edible.objects.get(name="Dressing")
         self.assertEqual(dressing.used_in.count(), 1)
 
-    # def test_ingredients_count_of_ingredient(self) -> None:
-    #     salad = Edible.objects.get(name="Mixed Salad")
-    #     self.assertEqual(salad.ingredients.get(name="Dressing").ingredients.count(), 4)
+    def test_ingredients_count_of_ingredient(self) -> None:
+        salad = Edible.objects.get(name="Mixed Salad")
+        self.assertEqual(salad.ingredients.get(name="Dressing").ingredients.count(), 4)
