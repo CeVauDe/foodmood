@@ -9,7 +9,7 @@ class Edible(models.Model):
     An edible item, that can consist of multiple other edibles, but does not have to
     """
 
-    name: models.CharField = models.CharField(max_length=64)
+    name: models.CharField = models.CharField(max_length=64, unique=True, blank=False)
     creation_date: models.DateTimeField = models.DateTimeField(auto_now_add=True)
     update_date: models.DateTimeField = models.DateTimeField(auto_now_add=True)
     ingredients: models.ManyToManyField["Edible", "Edible"] = models.ManyToManyField(
