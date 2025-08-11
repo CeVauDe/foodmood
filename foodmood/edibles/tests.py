@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 
 from .models import Edible
@@ -33,3 +34,10 @@ class IngredientsTestCase(TestCase):
     def test_ingredients_count_of_ingredient(self) -> None:
         salad = Edible.objects.get(name="Mixed Salad")
         self.assertEqual(salad.ingredients.get(name="Dressing").ingredients.count(), 4)
+
+    def test_edible_cannot_have_itself_as_ingredient(self) -> None:
+        e1 = Edible.objects.create(name="e1")
+
+        with self.assertRaises(ValidationError):
+            e1.ingredients.set([e1])
+            e1.full_clean()
