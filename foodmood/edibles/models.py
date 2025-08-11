@@ -18,4 +18,4 @@ class Edible(models.Model):
     used_in: models.QuerySet["Edible"]
 
     def __str__(self) -> str:
-        return f"{self.name}"
+        return f"{self.name} ({self.ingredients.count()} ingredients)"
