@@ -13,6 +13,7 @@ class EdibleQuickForm(forms.ModelForm):
             attrs={
                 "class": "form-select",
                 "data-placeholder": "Type to search ingredients",
+                "placeholder": "Type to search ingredients",
             }
         ),
         help_text="Optionally select one or more existing edibles as ingredients.",
