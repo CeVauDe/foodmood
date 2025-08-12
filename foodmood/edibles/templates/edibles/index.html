@@ -19,8 +19,6 @@
                                 <div class="invalid-feedback d-block">
                                     {{ form.name.errors|striptags }}
                                 </div>
-                            {% else %}
-                                <div class="form-text">{{ form.name.help_text }}</div>
                             {% endif %}
                         </div>
                         <div class="col-sm-4 col-md-3">
@@ -30,7 +28,7 @@
 
                     <div class="mb-3">
                         <label class="form-label" for="ingredientSearch">Ingredients (optional)</label>
-                        <input id="ingredientSearch" type="text" class="form-control" placeholder="Type to filter ingredients...">
+                        <input id="ingredientSearch" type="text" class="form-control" placeholder="Type to filter ingredients..." title="Type to filter ingredients" data-bs-toggle="tooltip" data-bs-placement="top">
                         <div class="row mt-2">
                             <div class="col-md-8">
                                 {{ form.ingredients }}
@@ -38,8 +36,6 @@
                                     <div class="invalid-feedback d-block">
                                         {{ form.ingredients.errors|striptags }}
                                     </div>
-                                {% else %}
-                                    <div class="form-text">{{ form.ingredients.help_text }}</div>
                                 {% endif %}
                             </div>
                             <div class="col-md-4">
@@ -120,6 +116,12 @@
             search.addEventListener('input', filterOptions);
 
             refreshSelectedList();
+
+            // Enable Bootstrap tooltips
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+              new bootstrap.Tooltip(tooltipTriggerEl);
+            });
         });
         </script>
     </div>
