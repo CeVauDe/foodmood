@@ -18,6 +18,15 @@ class EdibleQuickForm(forms.ModelForm):
         help_text="Optionally select one or more existing edibles as ingredients.",
     )
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Move help text into tooltip attributes on the widgets
+        for name, field in self.fields.items():
+            if field.help_text:
+                field.widget.attrs.setdefault("title", field.help_text)
+                field.widget.attrs.setdefault("data-bs-toggle", "tooltip")
+                field.widget.attrs.setdefault("data-bs-placement", "top")
+
     class Meta:
         model = Edible
         fields = ["name", "ingredients"]
