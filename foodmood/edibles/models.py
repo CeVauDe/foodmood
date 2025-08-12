@@ -13,7 +13,7 @@ class Edible(models.Model):
     creation_date: models.DateTimeField = models.DateTimeField(auto_now_add=True)
     update_date: models.DateTimeField = models.DateTimeField(auto_now_add=True)
     ingredients: models.ManyToManyField["Edible", "Edible"] = models.ManyToManyField(
-        "Edible", blank=False, related_name="used_in"
+        "Edible", related_name="used_in", blank=True
     )
 
     used_in: models.QuerySet["Edible"]
