@@ -6,6 +6,31 @@
     <div class="main-container">
         <h1>Latest Edibles 🥦🍅</h1>
 
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title mb-3">Create a new Edible</h5>
+                <form method="post" action="">
+                    {% csrf_token %}
+                    <div class="row g-2 align-items-end">
+                        <div class="col-sm-8 col-md-9">
+                            <label for="id_name" class="form-label">Name</label>
+                            {{ form.name }}
+                            {% if form.name.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.name.errors|striptags }}
+                                </div>
+                            {% else %}
+                                <div class="form-text">{{ form.name.help_text }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-sm-4 col-md-3">
+                            <button type="submit" class="btn btn-primary w-100">Add</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         {% if edibles %}
             <div class="table-responsive">
                 <table class="table table-striped table-hover">
