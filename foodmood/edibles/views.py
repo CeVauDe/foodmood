@@ -1,5 +1,5 @@
 from django.db.models import Count
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.views.decorators.http import require_http_methods
 
@@ -27,3 +27,20 @@ def index(request: HttpRequest) -> HttpResponse:
         "edibles/index.html",
         context={"edibles": latest_edibles, "form": form},
     )
+
+
+@require_http_methods(["POST"])
+def quick_create_edible(request: HttpRequest) -> JsonResponse:
+    name = request.POST.get("name", "").strip()
+    if not name:
+        return JsonResponse({"ok": False, "error": "Name is required"}, status=400)
+
+    # Do not allow duplicates
+    existing = Edible.objects.filter(name__iexact=name).first()
+    if existing is not None:
+        return JsonResponse(
+            {"ok": True, "id": existing.pk, "name": existing.name, "existing": True}
+        )
+
+    edible = Edible.objects.create(name=name)
+    return JsonResponse({"ok": True, "id": edible.pk, "name": edible.name})

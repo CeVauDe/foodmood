@@ -91,12 +91,36 @@
     new bootstrap.Tooltip(tooltipTriggerEl);
   });
 
+  // CSRF fetch helper
+  function getCookie(name){
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+  }
+  const csrfToken = getCookie('csrftoken');
+
   // Initialize Tom Select for the ingredients multi-select
   const ingredientsSelect = document.getElementById('id_ingredients');
   if (ingredientsSelect && window.TomSelect) {
-    new TomSelect(ingredientsSelect, {
+    const ts = new TomSelect(ingredientsSelect, {
       plugins: ['remove_button'],
-      create: false,
+      create: function(input, callback) {
+        fetch('{% url "edibles:quick_create" %}', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+            'X-CSRFToken': csrfToken || ''
+          },
+          body: new URLSearchParams({ name: input }).toString()
+        }).then(r => r.json()).then(data => {
+          if (!data.ok) { callback(); return; }
+          const option = { value: String(data.id), text: data.name };
+          callback(option);
+          ts.addItem(option.value);
+          ts.setTextboxValue('');
+          ts.refreshOptions(false);
+        }).catch(() => callback());
+      },
       persist: false,
       maxOptions: 1000,
       placeholder: ingredientsSelect.getAttribute('data-placeholder') || 'Select ingredients',
@@ -104,7 +128,6 @@
       closeAfterSelect: false,
       hideSelected: true,
       onItemAdd: function(value, item) {
-        // Clear the search box after selecting (Enter/click)
         this.setTextboxValue('');
         this.refreshOptions(false);
       },
