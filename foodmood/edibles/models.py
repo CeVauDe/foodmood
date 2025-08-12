@@ -19,7 +19,10 @@ class Edible(models.Model):
     used_in: models.QuerySet["Edible"]
 
     def __str__(self) -> str:
-        return f"{self.name} ({self.ingredients.count()} ingredients)"
+        ingredients = ""
+        if (num_ingredients := self.ingredients.count()) > 0:
+            ingredients = f" ({num_ingredients} ingredients)"
+        return f"{self.name}{ingredients}"
 
     def clean(self) -> None:
         ingredients = self.ingredients.all()
