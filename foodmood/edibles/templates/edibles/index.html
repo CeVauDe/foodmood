@@ -27,22 +27,15 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label" for="ingredientSearch">Ingredients (optional)</label>
-                        <input id="ingredientSearch" type="text" class="form-control" placeholder="Type to filter ingredients..." title="Type to filter ingredients" data-bs-toggle="tooltip" data-bs-placement="top">
+                        <label class="form-label" for="id_ingredients">Ingredients (optional)</label>
                         <div class="row mt-2">
-                            <div class="col-md-8">
+                            <div class="col-md-12">
                                 {{ form.ingredients }}
                                 {% if form.ingredients.errors %}
                                     <div class="invalid-feedback d-block">
                                         {{ form.ingredients.errors|striptags }}
                                     </div>
                                 {% endif %}
-                            </div>
-                            <div class="col-md-4">
-                                <div class="border rounded p-2 h-100">
-                                    <div class="fw-semibold mb-2">Selected ingredients</div>
-                                    <ul id="selectedIngredients" class="list-unstyled small mb-0"></ul>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -86,43 +79,45 @@
                 <hr>
             </div>
         {% endif %}
-
-        <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const select = document.getElementById('id_ingredients');
-            const search = document.getElementById('ingredientSearch');
-            const list = document.getElementById('selectedIngredients');
-
-            if (!select || !search || !list) return;
-
-            function refreshSelectedList() {
-                list.innerHTML = '';
-                Array.from(select.selectedOptions).forEach((opt) => {
-                    const li = document.createElement('li');
-                    li.textContent = opt.text;
-                    list.appendChild(li);
-                });
-            }
-
-            function filterOptions() {
-                const q = search.value.trim().toLowerCase();
-                Array.from(select.options).forEach((opt) => {
-                    const match = opt.text.toLowerCase().includes(q);
-                    opt.hidden = q && !match;
-                });
-            }
-
-            select.addEventListener('change', refreshSelectedList);
-            search.addEventListener('input', filterOptions);
-
-            refreshSelectedList();
-
-            // Enable Bootstrap tooltips
-            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-            tooltipTriggerList.forEach(function (tooltipTriggerEl) {
-              new bootstrap.Tooltip(tooltipTriggerEl);
-            });
-        });
-        </script>
     </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function(){
+  // Enable Bootstrap tooltips
+  const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+  tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+    new bootstrap.Tooltip(tooltipTriggerEl);
+  });
+
+  // Initialize Tom Select for the ingredients multi-select
+  const ingredientsSelect = document.getElementById('id_ingredients');
+  if (ingredientsSelect && window.TomSelect) {
+    new TomSelect(ingredientsSelect, {
+      plugins: ['remove_button'],
+      create: false,
+      persist: false,
+      maxOptions: 1000,
+      placeholder: ingredientsSelect.getAttribute('data-placeholder') || 'Select ingredients',
+      allowEmptyOption: true,
+      closeAfterSelect: false,
+      hideSelected: true,
+      onItemAdd: function(value, item) {
+        // Clear the search box after selecting (Enter/click)
+        this.setTextboxValue('');
+        this.refreshOptions(false);
+      },
+      render: {
+        option: function(data, escape) {
+          return '<div>' + escape(data.text) + '</div>';
+        },
+        item: function(data, escape) {
+          return '<div>' + escape(data.text) + '</div>';
+        }
+      }
+    });
+  }
+})();
+</script>
 {% endblock %}
