@@ -11,7 +11,7 @@
                 <h5 class="card-title mb-3">Create a new Edible</h5>
                 <form method="post" action="">
                     {% csrf_token %}
-                    <div class="row g-2 align-items-end">
+                    <div class="row g-2 align-items-end mb-3">
                         <div class="col-sm-8 col-md-9">
                             <label for="id_name" class="form-label">Name</label>
                             {{ form.name }}
@@ -25,6 +25,29 @@
                         </div>
                         <div class="col-sm-4 col-md-3">
                             <button type="submit" class="btn btn-primary w-100">Add</button>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="ingredientSearch">Ingredients (optional)</label>
+                        <input id="ingredientSearch" type="text" class="form-control" placeholder="Type to filter ingredients...">
+                        <div class="row mt-2">
+                            <div class="col-md-8">
+                                {{ form.ingredients }}
+                                {% if form.ingredients.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.ingredients.errors|striptags }}
+                                    </div>
+                                {% else %}
+                                    <div class="form-text">{{ form.ingredients.help_text }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4">
+                                <div class="border rounded p-2 h-100">
+                                    <div class="fw-semibold mb-2">Selected ingredients</div>
+                                    <ul id="selectedIngredients" class="list-unstyled small mb-0"></ul>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </form>
@@ -67,5 +90,37 @@
                 <hr>
             </div>
         {% endif %}
+
+        <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const select = document.getElementById('id_ingredients');
+            const search = document.getElementById('ingredientSearch');
+            const list = document.getElementById('selectedIngredients');
+
+            if (!select || !search || !list) return;
+
+            function refreshSelectedList() {
+                list.innerHTML = '';
+                Array.from(select.selectedOptions).forEach((opt) => {
+                    const li = document.createElement('li');
+                    li.textContent = opt.text;
+                    list.appendChild(li);
+                });
+            }
+
+            function filterOptions() {
+                const q = search.value.trim().toLowerCase();
+                Array.from(select.options).forEach((opt) => {
+                    const match = opt.text.toLowerCase().includes(q);
+                    opt.hidden = q && !match;
+                });
+            }
+
+            select.addEventListener('change', refreshSelectedList);
+            search.addEventListener('input', filterOptions);
+
+            refreshSelectedList();
+        });
+        </script>
     </div>
 {% endblock %}
