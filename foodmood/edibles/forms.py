@@ -4,14 +4,23 @@ from .models import Edible
 
 
 class EdibleQuickForm(forms.ModelForm):
-    """Minimal form to quickly create an Edible with just a name.
+    """Create an Edible with a name and optional ingredients."""
 
-    Ingredients can be added/managed later from a dedicated edit page.
-    """
+    ingredients = forms.ModelMultipleChoiceField(
+        queryset=Edible.objects.all(),
+        required=False,
+        widget=forms.SelectMultiple(
+            attrs={
+                "class": "form-select",
+                "data-placeholder": "Type to search ingredients",
+            }
+        ),
+        help_text="Optionally select one or more existing edibles as ingredients.",
+    )
 
     class Meta:
         model = Edible
-        fields = ["name"]
+        fields = ["name", "ingredients"]
         widgets = {
             "name": forms.TextInput(
                 attrs={
