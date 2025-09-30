@@ -27,4 +27,5 @@ urlpatterns: list[URLResolver | URLPattern] = [
     path("admin/", admin.site.urls),
     path("health/", views.health_check, name="health_check"),
     path("edibles/", include("edibles.urls")),
+    path("meals/", include("meals.urls")),
 ]
