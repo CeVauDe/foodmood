@@ -20,19 +20,19 @@ FoodMood is a webpage that lets you track your meals and your wellbeing to look 
 
 ### Installation
 
-1. Install dependencies using Poetry:
+1. Install dependencies using uv:
    ```bash
-   poetry install
+   uv sync
    ```
 
 2. Run database migrations:
    ```bash
-   poetry run python foodmood/manage.py migrate
+   uv run python foodmood/manage.py migrate
    ```
 
 3. Start the development server:
    ```bash
-   poetry run python foodmood/manage.py runserver
+   uv run python foodmood/manage.py runserver
    ```
 
 4. Access the application at http://localhost:8000
@@ -64,14 +64,13 @@ To run tests locally:
 
 ```bash
 # Run all tests
-poetry run python foodmood/manage.py test
+uvx --from poethepoet poe test
 
 # Run tests with coverage
-poetry run coverage run --source='.' foodmood/manage.py test
-poetry run coverage report
+uvx --from poethepoet poe test-coverage
 
 # Run specific app tests
-poetry run python foodmood/manage.py test users
+uv run python foodmood/manage.py test users
 ```
 
 ### Code Quality
@@ -84,13 +83,13 @@ This project uses several tools to maintain code quality:
 
 ```bash
 # Run linting
-poetry run ruff check .
+uvx --from poethepoet poe lint
 
 # Run formatting
-poetry run ruff format .
+uvx --from poethepoet poe format
 
 # Run type checking
-poetry run mypy foodmood --disallow-untyped-calls
+uvx --from poethepoet poe mypy
 ```
 
 ### Continuous Integration

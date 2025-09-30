@@ -5,32 +5,25 @@ FROM python:3.13-slim AS base
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PIP_NO_CACHE_DIR=1 \
-    PIP_DISABLE_PIP_VERSION_CHECK=1
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    VIRTUAL_ENV=/app/.venv \
+    PATH="/app/.venv/bin:$PATH"
 
-# Install system dependencies
+# Install system dependencies and uv
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+
 RUN apt-get update && apt-get install -y \
     build-essential \
-    curl \
     && rm -rf /var/lib/apt/lists/*
-
-# Install Poetry
-ENV POETRY_HOME="/opt/poetry" \
-    POETRY_CACHE_DIR=/tmp/poetry_cache \
-    POETRY_NO_INTERACTION=1 \
-    POETRY_VENV_IN_PROJECT=1
-RUN curl -sSL https://install.python-poetry.org | python3 -
-ENV PATH="$POETRY_HOME/bin:$PATH"
 
 # Set work directory
 WORKDIR /app
 
-# Copy Poetry files
-COPY pyproject.toml poetry.lock ./
+# Copy dependency files
+COPY pyproject.toml uv.lock ./
 
-# Configure Poetry and install dependencies
-RUN poetry config virtualenvs.create false \
-    && poetry install --only=main --no-root \
-    && rm -rf "$POETRY_CACHE_DIR"
+# Install dependencies
+RUN uv sync --frozen --no-dev --no-install-project
 
 # Copy only the necessary application files
 COPY foodmood/ ./foodmood/

@@ -15,29 +15,16 @@ jobs:
       with:
         python-version: "3.13"
 
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
+      with:
+        enable-cache: true
+
     - name: Install Poe
-      run: pipx install poethepoet
-
-    - name: Install Poetry
-      uses: snok/install-poetry@v1
-      with:
-        version: latest
-        virtualenvs-create: true
-        virtualenvs-in-project: false
-
-    - name: Load cached venv
-      id: cached-poetry-dependencies
-      uses: actions/cache@v4
-      with:
-        path: .venv
-        key: venv-${{ runner.os }}-3.13-${{ hashFiles('**/poetry.lock') }}
+      run: uv tool install poethepoet
 
     - name: Install dependencies
-      if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-      run: poetry install --no-interaction --no-root
-
-    - name: Install project
-      run: poetry install --no-interaction
+      run: uv sync --frozen
 
     - name: Create .env file for testing
       run: |
@@ -45,10 +32,10 @@ jobs:
         echo "DJANGO_DEBUG=true" >> .env
 
     - name: Run Ruff (linting)
-      run: poe lint
+      run: uvx --from poethepoet poe lint
 
     - name: Run Ruff (formatting)
-      run: poe format-check
+      run: uvx --from poethepoet poe format-check
 
     - name: Run MyPy
-      run: poe mypy
+      run: uvx --from poethepoet poe mypy
