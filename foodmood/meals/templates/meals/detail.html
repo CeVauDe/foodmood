@@ -1,0 +1,58 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ meal.title }} - Meal Details{% endblock %}
+
+{% block body %}
+    <div class="main-container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'meals:index' %}">Meals</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ meal.title }}</li>
+            </ol>
+        </nav>
+
+        <h1>{{ meal.title }}</h1>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Meal Information</h5>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <strong>Category:</strong><br>
+                        {% if meal.category == "BREAKFAST" %}
+                            <span class="badge bg-warning text-dark">🌅 Breakfast</span>
+                        {% elif meal.category == "LUNCH" %}
+                            <span class="badge bg-info text-dark">☀️ Lunch</span>
+                        {% elif meal.category == "DINNER" %}
+                            <span class="badge bg-primary">🌙 Dinner</span>
+                        {% elif meal.category == "SNACK" %}
+                            <span class="badge bg-success">🍪 Snack</span>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Eaten At:</strong><br>
+                        {{ meal.eaten_at|date:"d.M.Y" }} at {{ meal.eaten_at|time:"H:i" }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <strong>Edibles:</strong>
+                        {% if meal.edibles.all %}
+                            <ul class="list-group list-group-flush mt-2">
+                                {% for edible in meal.edibles.all %}
+                                    <li class="list-group-item">{{ edible.name }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="text-muted mt-2">No edibles recorded for this meal.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <a href="{% url 'meals:index' %}" class="btn btn-secondary">← Back to Meals</a>
+    </div>
+{% endblock %}
