@@ -13,6 +13,7 @@ class Meal(models.Model):
         DINNER = "DINNER", "Dinner"
         SNACK = "SNACK", "Snack"
 
+    id: models.AutoField
     title: models.CharField = models.CharField(max_length=128, blank=False)
     category: models.CharField = models.CharField(
         max_length=20,
