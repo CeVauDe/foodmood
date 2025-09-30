@@ -11,7 +11,7 @@ dependencies = ["django (>=5.2.4,<6.0.0)", "python-dotenv (>=1.1.1,<2.0.0)", "ps
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.17.0"
 pre-commit = "^4.2.0"
-ruff = "^0.12.5"
+ruff = "^0.13.0"
 coverage = "^7.10.0"
 
 [tool.mypy]
