@@ -43,7 +43,7 @@ function initializeTomSelect(elementId, createUrl, placeholder) {
     },
     persist: false,
     maxOptions: 1000,
-    placeholder: placeholder || selectElement.getAttribute('data-placeholder') || 'Select items',
+    placeholder: placeholder || selectElement.dataset.placeholder || 'Select items',
     allowEmptyOption: true,
     closeAfterSelect: false,
     hideSelected: true,
