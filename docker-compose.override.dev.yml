@@ -8,6 +8,6 @@ services:
     environment:
       - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY:-your-secret-key-here}
       - DJANGO_DEBUG=true
-
+    working_dir: /app/foodmood
     restart: unless-stopped
-    command: python manage.py runserver 0.0.0.0:8000
+    command: bash ../scripts/entrypoint.dev.sh
