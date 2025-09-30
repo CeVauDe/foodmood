@@ -9,6 +9,53 @@
 
 FoodMood is a webpage that lets you track your meals and your wellbeing to look for correlations.
 
+## Features
+
+- **User Authentication**: Complete registration and login system with Django's built-in authentication
+- **Edible Tracking**: Track food items with support for recursive ingredient relationships
+- **Quick-Create API**: Dynamically add new ingredients with duplicate detection
+- **Admin Interface**: Django admin panel for managing users and edibles
+
+## Getting Started
+
+### Installation
+
+1. Install dependencies using Poetry:
+   ```bash
+   poetry install
+   ```
+
+2. Run database migrations:
+   ```bash
+   poetry run python foodmood/manage.py migrate
+   ```
+
+3. Start the development server:
+   ```bash
+   poetry run python foodmood/manage.py runserver
+   ```
+
+4. Access the application at http://localhost:8000
+
+For Docker setup, see [DOCKER.md](DOCKER.md).
+
+## Project Structure
+
+### Edible Model
+The core model is `Edible`, which represents any food item. Edibles can contain other edibles as ingredients, creating a flexible hierarchical structure:
+- A simple ingredient (e.g., "tomato")
+- A complex meal with multiple ingredients (e.g., "pasta with tomato sauce")
+
+### Available Routes
+- `/` - Home page
+- `/users/register/` - User registration
+- `/users/login/` - User login
+- `/users/logout/` - User logout
+- `/edibles/` - Edibles tracking page
+- `/edibles/api/quick-create/` - API endpoint for creating ingredients
+- `/health/` - Health check endpoint
+- `/admin/` - Django admin interface
+
 ## Development
 
 ### Running Tests
