@@ -277,3 +277,50 @@ class MealViewTestCase(TestCase):
 
         # Should only show latest 10
         self.assertEqual(len(meals), 10)
+
+    def test_detail_view_get(self) -> None:
+        """Test GET request to meal detail view."""
+        eaten_at = timezone.now()
+        meal = Meal.objects.create(
+            title="Test Meal",
+            category="BREAKFAST",
+            eaten_at=eaten_at,
+        )
+        response = self.client.get(f"/meals/{meal.id}/")
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "meals/detail.html")
+        self.assertIn("meal", response.context)
+
+    def test_detail_view_displays_meal_info(self) -> None:
+        """Test that detail view displays meal information."""
+        eaten_at = timezone.now()
+        meal = Meal.objects.create(
+            title="Breakfast Toast",
+            category="BREAKFAST",
+            eaten_at=eaten_at,
+        )
+        meal.edibles.set([self.bread, self.cheese])
+
+        response = self.client.get(f"/meals/{meal.id}/")
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Breakfast Toast")
+        self.assertContains(response, "Breakfast")
+        self.assertContains(response, "Bread")
+        self.assertContains(response, "Cheese")
+
+    def test_detail_view_404_for_nonexistent_meal(self) -> None:
+        """Test that detail view returns 404 for nonexistent meal."""
+        response = self.client.get("/meals/99999/")
+        self.assertEqual(response.status_code, 404)
+
+    def test_index_view_meal_title_is_link(self) -> None:
+        """Test that meal titles in index are links to detail page."""
+        eaten_at = timezone.now()
+        meal = Meal.objects.create(
+            title="Test Meal",
+            category="LUNCH",
+            eaten_at=eaten_at,
+        )
+        response = self.client.get("/meals/")
+        self.assertContains(response, f'href="/meals/{meal.id}/"')
+        self.assertContains(response, "Test Meal")

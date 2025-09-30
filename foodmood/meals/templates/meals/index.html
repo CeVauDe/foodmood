@@ -82,7 +82,7 @@
                         {% for meal in meals %}
                         <tr>
                             <td>
-                                <strong>{{ meal.title }}</strong>
+                                <strong><a href="{% url 'meals:detail' meal.id %}">{{ meal.title }}</a></strong>
                             </td>
                             <td>
                                 {% if meal.category == "BREAKFAST" %}
