@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "users",
     "edibles",
+    "meals",
 ]
 
 MIDDLEWARE = [
@@ -135,6 +136,12 @@ USE_I18N = True
 USE_TZ = True
 
 TIME_INPUT_FORMATS = ("%H:%M",)
+DATETIME_INPUT_FORMATS = (
+    "%Y-%m-%d %H:%M:%S",
+    "%Y-%m-%d %H:%M",
+    "%d.%m.%Y %H:%M:%S",
+    "%d.%m.%Y %H:%M",
+)
 
 
 # Static files (CSS, JavaScript, Images)

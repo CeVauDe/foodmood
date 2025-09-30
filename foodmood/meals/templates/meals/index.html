@@ -1,0 +1,127 @@
+{% extends "layout.html" %}
+
+{% block title %}Meals{% endblock %}
+
+{% block body %}
+    <div class="main-container">
+        <h1>Meals 🍽️</h1>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title mb-3">Register a Meal</h5>
+                <form method="post" action="">
+                    {% csrf_token %}
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label for="id_title" class="form-label">Title</label>
+                            {{ form.title }}
+                            {% if form.title.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.title.errors|striptags }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="id_category" class="form-label">Category</label>
+                            {{ form.category }}
+                            {% if form.category.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.category.errors|striptags }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_eaten_at" class="form-label">When did you eat this?</label>
+                        {{ form.eaten_at }}
+                        {% if form.eaten_at.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.eaten_at.errors|striptags }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="id_edibles">Edibles (optional)</label>
+                        <div class="row mt-2">
+                            <div class="col-md-12">
+                                {{ form.edibles }}
+                                {% if form.edibles.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.edibles.errors|striptags }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary">Register Meal</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        {% if meals %}
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th scope="col">Title</th>
+                            <th scope="col">Category</th>
+                            <th scope="col">Eaten At</th>
+                            <th scope="col">Edibles Count</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for meal in meals %}
+                        <tr>
+                            <td>
+                                <strong>{{ meal.title }}</strong>
+                            </td>
+                            <td>
+                                {% if meal.category == "BREAKFAST" %}
+                                    <span class="badge bg-warning text-dark">🌅 Breakfast</span>
+                                {% elif meal.category == "LUNCH" %}
+                                    <span class="badge bg-info text-dark">☀️ Lunch</span>
+                                {% elif meal.category == "DINNER" %}
+                                    <span class="badge bg-primary">🌙 Dinner</span>
+                                {% elif meal.category == "SNACK" %}
+                                    <span class="badge bg-success">🍪 Snack</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {{ meal.eaten_at|date:"d.M.Y" }}
+                                <small class="text-muted d-block">{{ meal.eaten_at|time:"H:i" }}</small>
+                            </td>
+                            <td>
+                                <span class="badge bg-secondary">{{ meal.num_edibles }}</span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-info" role="alert">
+                <h4 class="alert-heading">No meals registered yet!</h4>
+                <p>You haven't registered any meals yet. Use the form above to register your first meal!</p>
+                <hr>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function(){
+  enableBootstrapTooltips();
+  initializeTomSelect('id_edibles', '{% url "edibles:quick_create" %}', 'Type to search edibles');
+})();
+</script>
+{% endblock %}
