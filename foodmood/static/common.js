@@ -18,7 +18,7 @@ function getCookie(name) {
 // Initialize Tom Select for edibles/ingredients with quick-create support
 function initializeTomSelect(elementId, createUrl, placeholder) {
   const selectElement = document.getElementById(elementId);
-  if (!selectElement || !window.TomSelect) return;
+  if (!selectElement || !globalThis.TomSelect) return;
 
   const csrfToken = getCookie('csrftoken');
 
