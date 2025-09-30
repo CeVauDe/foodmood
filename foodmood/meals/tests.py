@@ -196,7 +196,7 @@ class MealFormTestCase(TestCase):
         """Test that eaten_at field has a datetime input widget."""
         form = MealForm()
         widget = form.fields["eaten_at"].widget
-        self.assertEqual(widget.input_type, "datetime-local")
+        self.assertEqual(getattr(widget, "input_type", None), "datetime-local")
 
 
 class MealViewTestCase(TestCase):
@@ -226,6 +226,8 @@ class MealViewTestCase(TestCase):
         self.assertEqual(response.status_code, 302)  # Redirect after success
         self.assertEqual(Meal.objects.count(), 1)
         meal = Meal.objects.first()
+        self.assertIsNotNone(meal)
+        assert meal is not None  # Type narrowing for mypy
         self.assertEqual(meal.title, "Test Meal")
         self.assertEqual(meal.category, "BREAKFAST")
         self.assertEqual(meal.edibles.count(), 2)

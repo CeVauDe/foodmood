@@ -1,3 +1,5 @@
+from typing import Any
+
 from django import forms
 from django.utils import timezone
 from edibles.models import Edible
@@ -21,7 +23,7 @@ class MealForm(forms.ModelForm):
         help_text="Optionally select one or more edibles for this meal.",
     )
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         # Move help text into tooltip attributes on the widgets
         for name, field in self.fields.items():
