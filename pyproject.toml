@@ -63,7 +63,7 @@ makemigrations  = "python foodmood/manage.py makemigrations"
 test = "python foodmood/manage.py test foodmood -p 'test*.py'"
 test-p = "python foodmood/manage.py test foodmood -p 'test*.py' --parallel"
 test-app = "python foodmood/manage.py test -p 'test*.py'"
-test-coverage = { shell = "coverage run --source='.' foodmood/manage.py test && coverage report && coverage xml" }
+test-coverage = { shell = "coverage run --source='.' foodmood/manage.py test edibles.tests meals.tests users.tests && coverage report && coverage xml" }
 test-coverage-html = { shell = "coverage run --source='.' foodmood/manage.py test foodmood -p 'test*.py' && coverage html" }
 
 [tool.poe.tasks.mydc]
