@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+
+{% block title %}Edible not found{% endblock %}
+
+{% block body %}
+    <div class="main-container">
+        <div class="status-icon">🕵️‍♀️</div>
+        <h1>Edible not found</h1>
+        <p>We're sorry, but the edible you are looking for does not exist.</p>
+        <a href="{% url 'edibles:index' %}" class="btn btn-primary">← Back to Edibles</a>
+    </div>
+{% endblock %}
