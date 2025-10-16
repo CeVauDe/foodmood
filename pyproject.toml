@@ -6,7 +6,15 @@ authors = [{ name = "CeVauDe", email = "cevaude@outlook.de" }]
 license = "MIT"
 readme = "README.md"
 requires-python = ">=3.13,<4.0"
-dependencies = ["django (>=5.2.4,<6.0.0)", "python-dotenv (>=1.1.1,<2.0.0)", "psycopg2-binary (>=2.9.10,<3.0.0)", "django-stubs-ext (>=5.2.2,<6.0.0)", "django-types (>=0.22.0,<0.23.0)", "gunicorn (>=23.0.0,<24.0.0)", "whitenoise (>=6.9.0,<7.0.0)"]
+dependencies = [
+    "django (>=5.2.4,<6.0.0)",
+    "python-dotenv (>=1.1.1,<2.0.0)",
+    "django-stubs-ext (>=5.2.2,<6.0.0)",
+    "django-types (>=0.22.0,<0.23.0)",
+    "gunicorn (>=23.0.0,<24.0.0)",
+    "whitenoise (>=6.9.0,<7.0.0)",
+    "psycopg[binary,pool]>=3.2.10",
+]
 
 [dependency-groups]
 dev = [
