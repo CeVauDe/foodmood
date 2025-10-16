@@ -42,7 +42,11 @@
                         {% if meal.edibles.all %}
                             <ul class="list-group list-group-flush mt-2">
                                 {% for edible in meal.edibles.all %}
-                                    <li class="list-group-item">{{ edible.name }}</li>
+                                    <li class="list-group-item">
+                                        <a href="{% url 'edibles:detail' edible.id %}" class="text-decoration-none">
+                                            {{ edible.name }}
+                                        </a>
+                                    </li>
                                 {% endfor %}
                             </ul>
                         {% else %}
