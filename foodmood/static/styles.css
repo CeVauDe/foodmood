@@ -191,7 +191,7 @@ p {
     color: var(--text-secondary);
 }
 
-.construction-icon {
+.status-icon {
     font-size: 4rem;
     margin-bottom: 1rem;
     filter: drop-shadow(2px 2px 4px var(--shadow-color));
