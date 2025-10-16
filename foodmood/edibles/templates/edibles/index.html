@@ -57,7 +57,9 @@
                         {% for edible in edibles %}
                         <tr>
                             <td>
-                                <strong>{{ edible.name }}</strong>
+                                <a href="{% url 'edibles:detail' edible.id %}" class="text-decoration-none">
+                                    <strong>{{ edible.name }}</strong>
+                                </a>
                             </td>
                             <td>
                                 {{ edible.creation_date|date:"d.M.Y" }}
