@@ -53,4 +53,5 @@ def detail(request: HttpRequest, edible_id: int) -> HttpResponse:
     if edible is None:
         return render(request, "edibles/edible_not_found.html", status=404)
 
-    return render(request, "edibles/view_edible.html", context={"edible": edible})
+    ingredients = edible.ingredients.annotate(num_edibles=Count('ingredients'))
+    return render(request, "edibles/detail.html", context={"edible": edible, "ingredients": ingredients})

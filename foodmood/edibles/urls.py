@@ -6,6 +6,6 @@ app_name = "edibles"
 
 urlpatterns = [
     path("", views.index, name="index"),
-    path("<int:edible_id>/", views.detail, name="edible_detail"),
+    path("<int:edible_id>/", views.detail, name="detail"),
     path("api/quick-create/", views.quick_create_edible, name="quick_create"),
 ]
