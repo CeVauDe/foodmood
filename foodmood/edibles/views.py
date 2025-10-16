@@ -44,3 +44,13 @@ def quick_create_edible(request: HttpRequest) -> JsonResponse:
 
     edible = Edible.objects.create(name=name)
     return JsonResponse({"ok": True, "id": edible.pk, "name": edible.name})
+
+@require_http_methods(["GET"])
+def detail(request: HttpRequest, edible_id: int) -> HttpResponse:
+    edible = Edible.objects.filter(pk=edible_id).annotate(
+        num_ingredients=Count("ingredients")
+    ).first()
+    if edible is None:
+        return render(request, "edibles/edible_not_found.html", status=404)
+
+    return render(request, "edibles/view_edible.html", context={"edible": edible})
