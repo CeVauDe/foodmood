@@ -2,7 +2,7 @@
 
 This document outlines the tasks needed to make the FoodMood Django project production-ready.
 
-## 🔒 Security Tasks (HIGH PRIORITY)
+## 🔒 Security Tasks (HIGH PRIORITY) simple change
 
 ### 1. Security Settings Configuration
 - [ ] Add security middleware settings in `settings.py`:
