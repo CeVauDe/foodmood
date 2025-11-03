@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     "users",
     "edibles",
     "meals",
+    "wellbeing",
 ]
 
 MIDDLEWARE = [
