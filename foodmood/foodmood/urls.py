@@ -28,4 +28,5 @@ urlpatterns: list[URLResolver | URLPattern] = [
     path("health/", views.health_check, name="health_check"),
     path("edibles/", include("edibles.urls")),
     path("meals/", include("meals.urls")),
+    path("wellbeing/", include("wellbeing.urls")),
 ]
