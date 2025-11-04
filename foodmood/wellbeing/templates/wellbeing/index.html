@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+
+{% block title %}Wellbeing Tracker{% endblock %}
+
+{% block body %}
+<div class="main-container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Wellbeing Tracker</h1>
+        <div>
+            <a href="{% url 'wellbeing:entry_quick' %}" class="btn btn-primary">
+                Quick Entry
+            </a>
+            <a href="{% url 'wellbeing:entry_bulk' %}" class="btn btn-info">
+                Daily Check-in
+            </a>
+            <a href="{% url 'wellbeing:category_list' %}" class="btn btn-outline-secondary">
+                Manage Categories
+            </a>
+        </div>
+    </div>
+
+    <!-- Recent entries -->
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>Value</th>
+                    <th>When</th>
+                    <th>Notes</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in entries %}
+                <tr>
+                    <td>
+                        {% if entry.category.icon %}{{ entry.category.icon }}{% endif %}
+                        {{ entry.category.name }}
+                    </td>
+                    <td>
+                        <span class="badge bg-{{ entry.option.color|default:'secondary' }}">
+                            {{ entry.option.label }}
+                        </span>
+                        <small class="text-muted">({{ entry.option.value }})</small>
+                    </td>
+                    <td>{{ entry.recorded_at|date:"d.m.Y H:i" }}</td>
+                    <td>{{ entry.notes|truncatewords:10 }}</td>
+                    <td>
+                        <a href="{% url 'wellbeing:entry_edit' entry.id %}" class="btn btn-sm btn-outline-primary">Edit</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">No entries yet. Start tracking your wellbeing!</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

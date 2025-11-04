@@ -1,0 +1,79 @@
+{% extends "layout.html" %}
+
+{% block title %}Quick Entry{% endblock %}
+
+{% block body %}
+<div class="main-container">
+    <h1>Quick Wellbeing Entry</h1>
+
+    <form method="post" id="quick-entry-form">
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label for="{{ form.category.id_for_label }}" class="form-label">What are you tracking?</label>
+            {{ form.category }}
+        </div>
+
+        <div class="mb-3" id="options-container" style="display:none;">
+            <label class="form-label">How do you feel?</label>
+            <div id="options-list" class="d-flex flex-wrap gap-2">
+                <!-- Options will be loaded dynamically -->
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" disabled id="submit-btn">Log Entry</button>
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const categorySelect = document.getElementById('{{ form.category.id_for_label }}');
+    const optionsContainer = document.getElementById('options-container');
+    const optionsList = document.getElementById('options-list');
+    const submitBtn = document.getElementById('submit-btn');
+
+    categorySelect.addEventListener('change', function() {
+        const categoryId = this.value;
+        if (!categoryId) {
+            optionsContainer.style.display = 'none';
+            return;
+        }
+
+        // Fetch options for selected category
+        fetch(`/wellbeing/api/categories/${categoryId}/options/`)
+            .then(response => response.json())
+            .then(data => {
+                optionsList.innerHTML = '';
+                data.options.forEach(option => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = `btn btn-${option.color || 'outline-primary'} option-btn`;
+                    btn.dataset.optionId = option.id;
+                    btn.textContent = option.label;
+                    btn.addEventListener('click', function() {
+                        // Remove active class from all buttons
+                        document.querySelectorAll('.option-btn').forEach(b => {
+                            b.classList.remove('active');
+                        });
+                        // Add active class to clicked button
+                        this.classList.add('active');
+                        // Create hidden input for selected option
+                        let input = document.getElementById('selected-option');
+                        if (!input) {
+                            input = document.createElement('input');
+                            input.type = 'hidden';
+                            input.name = 'option';
+                            input.id = 'selected-option';
+                            document.getElementById('quick-entry-form').appendChild(input);
+                        }
+                        input.value = option.id;
+                        submitBtn.disabled = false;
+                    });
+                    optionsList.appendChild(btn);
+                });
+                optionsContainer.style.display = 'block';
+            });
+    });
+});
+</script>
+{% endblock %}
