@@ -9,6 +9,7 @@ class WellbeingCategory(models.Model):
     name = models.CharField(max_length=64, unique=True)
     description = models.TextField(blank=True)
     icon = models.CharField(max_length=50, blank=True)  # Optional emoji or icon class
+    is_active = models.BooleanField(default=True)  # Allow users to archive categories
     creation_date = models.DateTimeField(auto_now_add=True)
     update_date = models.DateTimeField(auto_now=True)
 

@@ -1,22 +1,112 @@
-from datetime import timezone
-from pyexpat.errors import messages
-
+from django.contrib import messages
 from django.db import transaction
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 
-from foodmood.wellbeing.forms import (
+from .forms import (
     BulkEntryForm,
     CategoryForm,
     EntryForm,
     OptionFormSet,
     QuickEntryForm,
 )
-from foodmood.wellbeing.models import WellbeingCategory, WellbeingEntry, WellbeingOption
+from .models import WellbeingCategory, WellbeingEntry, WellbeingOption
+
+
+@require_http_methods(["GET"])
+def dashboard(request: HttpRequest) -> HttpResponse:
+    """Main wellbeing dashboard showing recent entries."""
+    entries = WellbeingEntry.objects.select_related("category", "option").order_by(
+        "-recorded_at"
+    )[:20]
+
+    return render(
+        request,
+        "wellbeing/index.html",
+        {
+            "entries": entries,
+        },
+    )
+
+
+@require_http_methods(["GET"])
+def category_list(request: HttpRequest) -> HttpResponse:
+    """List all wellbeing categories."""
+    categories = WellbeingCategory.objects.prefetch_related("options").order_by("name")
+
+    return render(
+        request,
+        "wellbeing/category_list.html",
+        {
+            "categories": categories,
+        },
+    )
+
+
+@require_http_methods(["GET"])
+def category_detail(request: HttpRequest, category_id: int) -> HttpResponse:
+    """View details of a specific category."""
+    category = get_object_or_404(
+        WellbeingCategory.objects.prefetch_related("options"), pk=category_id
+    )
+    recent_entries = category.entries.select_related("option")[:10]
+
+    return render(
+        request,
+        "wellbeing/category_detail.html",
+        {
+            "category": category,
+            "recent_entries": recent_entries,
+        },
+    )
+
+
+@require_http_methods(["POST"])
+def category_toggle(request: HttpRequest, category_id: int) -> HttpResponse:
+    """Toggle the is_active status of a category."""
+    category = get_object_or_404(WellbeingCategory, pk=category_id)
+    category.is_active = not category.is_active
+    category.save()
+
+    return redirect("wellbeing:category_list")
 
 
 @require_http_methods(["GET", "POST"])
+def option_create(request: HttpRequest, category_id: int) -> HttpResponse:
+    """Create a new option for a category."""
+    category = get_object_or_404(WellbeingCategory, pk=category_id)
+
+    if request.method == "POST":
+        # Simple form handling - in production you'd use a proper form
+        label = request.POST.get("label")
+        value = request.POST.get("value")
+        color = request.POST.get("color", "")
+        order = request.POST.get("order", 0)
+
+        if label and value:
+            WellbeingOption.objects.create(
+                category=category,
+                label=label,
+                value=int(value),
+                color=color,
+                order=int(order),
+            )
+            messages.success(request, f"Added option '{label}' to {category.name}")
+
+        return redirect("wellbeing:category_detail", category_id=category.id)
+
+    return render(
+        request,
+        "wellbeing/option_form.html",
+        {
+            "category": category,
+        },
+    )
+
+
+@require_http_methods(["GET"])
 def category_create(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
         form = CategoryForm(request.POST)
@@ -160,3 +250,96 @@ def entry_bulk(request: HttpRequest) -> HttpResponse:
         form = BulkEntryForm()
 
     return render(request, "wellbeing/entry_bulk.html", {"form": form})
+
+
+@require_http_methods(["GET"])
+def entry_list(request: HttpRequest) -> HttpResponse:
+    """List all entries with optional filtering."""
+    entries = WellbeingEntry.objects.select_related("category", "option").order_by(
+        "-recorded_at"
+    )
+
+    # Filter by category if provided
+    category_id = request.GET.get("category")
+    if category_id:
+        entries = entries.filter(category_id=category_id)
+
+    # Filter by date range if provided
+    date_from = request.GET.get("date_from")
+    date_to = request.GET.get("date_to")
+    if date_from:
+        entries = entries.filter(recorded_at__gte=date_from)
+    if date_to:
+        entries = entries.filter(recorded_at__lte=date_to)
+
+    categories = WellbeingCategory.objects.filter(is_active=True).order_by("name")
+
+    return render(
+        request,
+        "wellbeing/entry_list.html",
+        {
+            "entries": entries,
+            "categories": categories,
+            "selected_category": category_id,
+        },
+    )
+
+
+@require_http_methods(["GET"])
+def entry_detail(request: HttpRequest, entry_id: int) -> HttpResponse:
+    """View details of a specific entry."""
+    entry = get_object_or_404(
+        WellbeingEntry.objects.select_related("category", "option"), pk=entry_id
+    )
+
+    return render(
+        request,
+        "wellbeing/entry_detail.html",
+        {
+            "entry": entry,
+        },
+    )
+
+
+@require_http_methods(["GET", "POST"])
+def entry_edit(request: HttpRequest, entry_id: int) -> HttpResponse:
+    """Edit an existing entry."""
+    entry = get_object_or_404(WellbeingEntry, pk=entry_id)
+
+    if request.method == "POST":
+        form = EntryForm(request.POST, instance=entry)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Entry updated successfully")
+            return redirect("wellbeing:entry_detail", entry_id=entry.id)
+    else:
+        form = EntryForm(instance=entry)
+
+    return render(
+        request,
+        "wellbeing/entry_form.html",
+        {
+            "form": form,
+            "entry": entry,
+            "action": "Edit",
+        },
+    )
+
+
+@require_http_methods(["GET", "POST"])
+def entry_delete(request: HttpRequest, entry_id: int) -> HttpResponse:
+    """Delete an entry."""
+    entry = get_object_or_404(WellbeingEntry, pk=entry_id)
+
+    if request.method == "POST":
+        entry.delete()
+        messages.success(request, "Entry deleted successfully")
+        return redirect("wellbeing:entry_list")
+
+    return render(
+        request,
+        "wellbeing/entry_delete.html",
+        {
+            "entry": entry,
+        },
+    )

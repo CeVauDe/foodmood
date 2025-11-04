@@ -1,9 +1,8 @@
-from datetime import timezone
-
 import django.forms as forms
 from django.forms import inlineformset_factory
+from django.utils import timezone
 
-from foodmood.wellbeing.models import WellbeingCategory, WellbeingEntry, WellbeingOption
+from .models import WellbeingCategory, WellbeingEntry, WellbeingOption
 
 
 class CategoryForm(forms.ModelForm):

@@ -1,0 +1,86 @@
+{% extends "layout.html" %}
+
+{% block title %}Entry Details{% endblock %}
+
+{% block body %}
+<div class="main-container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Entry Details</h1>
+        <div>
+            <a href="{% url 'wellbeing:entry_edit' entry.id %}" class="btn btn-outline-primary">Edit</a>
+            <a href="{% url 'wellbeing:entry_delete' entry.id %}" class="btn btn-outline-danger">Delete</a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <strong>Category:</strong>
+                </div>
+                <div class="col-md-9">
+                    {% if entry.category.icon %}{{ entry.category.icon }}{% endif %}
+                    <a href="{% url 'wellbeing:category_detail' entry.category.id %}">{{ entry.category.name }}</a>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <strong>Value:</strong>
+                </div>
+                <div class="col-md-9">
+                    <span class="badge bg-{{ entry.option.color|default:'secondary' }} fs-5">
+                        {{ entry.option.label }}
+                    </span>
+                    <span class="text-muted">(Numeric value: {{ entry.option.value }})</span>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <strong>Recorded At:</strong>
+                </div>
+                <div class="col-md-9">
+                    {{ entry.recorded_at|date:"l, F d, Y \a\t H:i" }}
+                </div>
+            </div>
+
+            {% if entry.notes %}
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <strong>Notes:</strong>
+                </div>
+                <div class="col-md-9">
+                    <p class="card-text">{{ entry.notes|linebreaks }}</p>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="row">
+                <div class="col-md-3">
+                    <strong>Created:</strong>
+                </div>
+                <div class="col-md-9">
+                    <small class="text-muted">{{ entry.creation_date|date:"d.m.Y H:i" }}</small>
+                </div>
+            </div>
+
+            {% if entry.update_date != entry.creation_date %}
+            <div class="row">
+                <div class="col-md-3">
+                    <strong>Last Updated:</strong>
+                </div>
+                <div class="col-md-9">
+                    <small class="text-muted">{{ entry.update_date|date:"d.m.Y H:i" }}</small>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a href="{% url 'wellbeing:entry_list' %}" class="btn btn-secondary">Back to Entries</a>
+        <a href="{% url 'wellbeing:dashboard' %}" class="btn btn-outline-secondary">Dashboard</a>
+    </div>
+</div>
+{% endblock %}

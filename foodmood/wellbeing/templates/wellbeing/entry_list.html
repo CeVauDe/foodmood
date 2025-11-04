@@ -1,0 +1,92 @@
+{% extends "layout.html" %}
+
+{% block title %}Wellbeing Entries{% endblock %}
+
+{% block body %}
+<div class="main-container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Wellbeing Entries</h1>
+        <div>
+            <a href="{% url 'wellbeing:entry_quick' %}" class="btn btn-primary">Quick Entry</a>
+            <a href="{% url 'wellbeing:entry_create' %}" class="btn btn-outline-primary">New Entry</a>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="card mb-3">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-4">
+                    <label for="category" class="form-label">Category</label>
+                    <select name="category" id="category" class="form-select">
+                        <option value="">All Categories</option>
+                        {% for category in categories %}
+                        <option value="{{ category.id }}" {% if selected_category == category.id|stringformat:"s" %}selected{% endif %}>
+                            {% if category.icon %}{{ category.icon }}{% endif %} {{ category.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="date_from" class="form-label">From Date</label>
+                    <input type="date" name="date_from" id="date_from" class="form-control" value="{{ request.GET.date_from }}">
+                </div>
+                <div class="col-md-3">
+                    <label for="date_to" class="form-label">To Date</label>
+                    <input type="date" name="date_to" id="date_to" class="form-control" value="{{ request.GET.date_to }}">
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-secondary w-100">Filter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Entries List -->
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>Value</th>
+                    <th>When</th>
+                    <th>Notes</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in entries %}
+                <tr>
+                    <td>
+                        {% if entry.category.icon %}{{ entry.category.icon }}{% endif %}
+                        {{ entry.category.name }}
+                    </td>
+                    <td>
+                        <span class="badge bg-{{ entry.option.color|default:'secondary' }}">
+                            {{ entry.option.label }}
+                        </span>
+                        <small class="text-muted">({{ entry.option.value }})</small>
+                    </td>
+                    <td>{{ entry.recorded_at|date:"d.m.Y H:i" }}</td>
+                    <td>{{ entry.notes|truncatewords:10 }}</td>
+                    <td>
+                        <a href="{% url 'wellbeing:entry_detail' entry.id %}" class="btn btn-sm btn-outline-info">View</a>
+                        <a href="{% url 'wellbeing:entry_edit' entry.id %}" class="btn btn-sm btn-outline-primary">Edit</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">
+                        No entries found. <a href="{% url 'wellbeing:entry_create' %}">Create your first entry</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="mt-4">
+        <a href="{% url 'wellbeing:dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %}
