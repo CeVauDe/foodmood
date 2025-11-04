@@ -1,0 +1,71 @@
+{% extends "layout.html" %}
+
+{% block title %}Daily Check-in{% endblock %}
+
+{% block body %}
+<div class="main-container">
+    <h1>Daily Check-in</h1>
+    <p class="lead">Log multiple wellbeing categories at once</p>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5>General Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="{{ form.recorded_at.id_for_label }}" class="form-label">Date & Time</label>
+                    {{ form.recorded_at }}
+                    {% if form.recorded_at.errors %}
+                    <div class="text-danger">{{ form.recorded_at.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.notes.id_for_label }}" class="form-label">General Notes (optional)</label>
+                    {{ form.notes }}
+                    {% if form.notes.errors %}
+                    <div class="text-danger">{{ form.notes.errors }}</div>
+                    {% endif %}
+                    <small class="form-text text-muted">These notes will be applied to all entries</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5>Categories</h5>
+            </div>
+            <div class="card-body">
+                <p class="text-muted">Select a value for each category you want to track. Skip any you don't want to log.</p>
+
+                {% for field in form %}
+                    {% if field.name|slice:":9" == "category_" %}
+                    <div class="mb-4 border-bottom pb-3">
+                        <label class="form-label fw-bold">{{ field.label }}</label>
+                        <div class="btn-group-vertical d-block">
+                            {% for choice in field %}
+                                <div class="form-check">
+                                    {{ choice.tag }}
+                                    <label class="form-check-label" for="{{ choice.id_for_label }}">
+                                        {{ choice.choice_label }}
+                                    </label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        {% if field.errors %}
+                        <div class="text-danger">{{ field.errors }}</div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-lg">Save All Entries</button>
+        <a href="{% url 'wellbeing:dashboard' %}" class="btn btn-secondary btn-lg">Cancel</a>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends "layout.html" %}
+
+{% block title %}Wellbeing Categories{% endblock %}
+
+{% block body %}
+<div class="main-container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Wellbeing Categories</h1>
+        <a href="{% url 'wellbeing:category_create' %}" class="btn btn-primary">
+            Create Category
+        </a>
+    </div>
+
+    <div class="row">
+        {% for category in categories %}
+        <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card {% if not category.is_active %}opacity-50{% endif %}">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        {% if category.icon %}{{ category.icon }}{% endif %}
+                        {{ category.name }}
+                        {% if not category.is_active %}
+                        <span class="badge bg-secondary">Inactive</span>
+                        {% endif %}
+                    </h5>
+                    <p class="card-text">{{ category.description|truncatewords:20 }}</p>
+                    <p class="text-muted small">
+                        {{ category.options.count }} option{{ category.options.count|pluralize }}
+                    </p>
+                    <div class="btn-group" role="group">
+                        <a href="{% url 'wellbeing:category_detail' category.id %}" class="btn btn-sm btn-outline-primary">
+                            View
+                        </a>
+                        <a href="{% url 'wellbeing:category_edit' category.id %}" class="btn btn-sm btn-outline-secondary">
+                            Edit
+                        </a>
+                        <form method="post" action="{% url 'wellbeing:category_toggle' category.id %}" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-outline-warning">
+                                {% if category.is_active %}Deactivate{% else %}Activate{% endif %}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                No categories yet. <a href="{% url 'wellbeing:category_create' %}">Create your first category</a> to start tracking your wellbeing.
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="mt-4">
+        <a href="{% url 'wellbeing:dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %}

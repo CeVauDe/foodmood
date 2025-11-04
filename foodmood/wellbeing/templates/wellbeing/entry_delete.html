@@ -1,0 +1,64 @@
+{% extends "layout.html" %}
+
+{% block title %}Delete Entry{% endblock %}
+
+{% block body %}
+<div class="main-container">
+    <h1>Delete Entry</h1>
+
+    <div class="alert alert-warning">
+        <strong>Warning!</strong> Are you sure you want to delete this entry? This action cannot be undone.
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="row mb-2">
+                <div class="col-md-3">
+                    <strong>Category:</strong>
+                </div>
+                <div class="col-md-9">
+                    {% if entry.category.icon %}{{ entry.category.icon }}{% endif %}
+                    {{ entry.category.name }}
+                </div>
+            </div>
+
+            <div class="row mb-2">
+                <div class="col-md-3">
+                    <strong>Value:</strong>
+                </div>
+                <div class="col-md-9">
+                    <span class="badge bg-{{ entry.option.color|default:'secondary' }}">
+                        {{ entry.option.label }}
+                    </span>
+                </div>
+            </div>
+
+            <div class="row mb-2">
+                <div class="col-md-3">
+                    <strong>Recorded At:</strong>
+                </div>
+                <div class="col-md-9">
+                    {{ entry.recorded_at|date:"d.m.Y H:i" }}
+                </div>
+            </div>
+
+            {% if entry.notes %}
+            <div class="row">
+                <div class="col-md-3">
+                    <strong>Notes:</strong>
+                </div>
+                <div class="col-md-9">
+                    {{ entry.notes }}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Yes, Delete Entry</button>
+        <a href="{% url 'wellbeing:entry_detail' entry.id %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

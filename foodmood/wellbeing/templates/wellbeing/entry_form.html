@@ -1,0 +1,80 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ action|default:"Create" }} Entry{% endblock %}
+
+{% block body %}
+<div class="main-container">
+    <h1>{{ action|default:"Create" }} Wellbeing Entry</h1>
+
+    <form method="post" id="entry-form">
+        {% csrf_token %}
+
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="{{ form.category.id_for_label }}" class="form-label">Category</label>
+                    {{ form.category }}
+                    {% if form.category.errors %}
+                    <div class="text-danger">{{ form.category.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3" id="option-container">
+                    <label for="{{ form.option.id_for_label }}" class="form-label">Value</label>
+                    {{ form.option }}
+                    {% if form.option.errors %}
+                    <div class="text-danger">{{ form.option.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.recorded_at.id_for_label }}" class="form-label">When</label>
+                    {{ form.recorded_at }}
+                    {% if form.recorded_at.errors %}
+                    <div class="text-danger">{{ form.recorded_at.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.notes.id_for_label }}" class="form-label">Notes (optional)</label>
+                    {{ form.notes }}
+                    {% if form.notes.errors %}
+                    <div class="text-danger">{{ form.notes.errors }}</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save Entry</button>
+        <a href="{% url 'wellbeing:entry_list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const categorySelect = document.getElementById('{{ form.category.id_for_label }}');
+    const optionSelect = document.getElementById('{{ form.option.id_for_label }}');
+
+    categorySelect.addEventListener('change', function() {
+        const categoryId = this.value;
+        if (!categoryId) {
+            optionSelect.innerHTML = '<option value="">---------</option>';
+            return;
+        }
+
+        // Fetch options for selected category
+        fetch(`/wellbeing/api/categories/${categoryId}/options/`)
+            .then(response => response.json())
+            .then(data => {
+                optionSelect.innerHTML = '<option value="">---------</option>';
+                data.options.forEach(option => {
+                    const opt = document.createElement('option');
+                    opt.value = option.id;
+                    opt.textContent = option.label;
+                    optionSelect.appendChild(opt);
+                });
+            });
+    });
+});
+</script>
+{% endblock %}
