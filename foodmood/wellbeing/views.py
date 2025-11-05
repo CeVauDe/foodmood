@@ -106,7 +106,7 @@ def option_create(request: HttpRequest, category_id: int) -> HttpResponse:
     )
 
 
-@require_http_methods(["GET"])
+@require_http_methods(["GET", "POST"])
 def category_create(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
         form = CategoryForm(request.POST)
