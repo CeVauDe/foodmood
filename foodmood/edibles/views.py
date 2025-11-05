@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.db.models import Count
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
@@ -8,6 +9,7 @@ from .models import Edible
 
 
 # Create your views here.
+@login_required
 @require_http_methods(["GET", "POST"])
 def index(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
@@ -29,6 +31,7 @@ def index(request: HttpRequest) -> HttpResponse:
     )
 
 
+@login_required
 @require_http_methods(["POST"])
 def quick_create_edible(request: HttpRequest) -> JsonResponse:
     name = request.POST.get("name", "").strip()
@@ -46,6 +49,7 @@ def quick_create_edible(request: HttpRequest) -> JsonResponse:
     return JsonResponse({"ok": True, "id": edible.pk, "name": edible.name})
 
 
+@login_required
 @require_http_methods(["GET"])
 def detail(request: HttpRequest, edible_id: int) -> HttpResponse:
     edible = (

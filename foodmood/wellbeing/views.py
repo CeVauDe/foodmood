@@ -1,6 +1,7 @@
 from typing import Any
 
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -17,6 +18,7 @@ from .forms import (
 from .models import WellbeingCategory, WellbeingEntry, WellbeingOption
 
 
+@login_required
 @require_http_methods(["GET"])
 def dashboard(request: HttpRequest) -> HttpResponse:
     """Main wellbeing dashboard showing recent entries."""
@@ -33,6 +35,7 @@ def dashboard(request: HttpRequest) -> HttpResponse:
     )
 
 
+@login_required
 @require_http_methods(["GET"])
 def category_list(request: HttpRequest) -> HttpResponse:
     """List all wellbeing categories."""
@@ -47,6 +50,7 @@ def category_list(request: HttpRequest) -> HttpResponse:
     )
 
 
+@login_required
 @require_http_methods(["GET"])
 def category_detail(request: HttpRequest, category_id: int) -> HttpResponse:
     """View details of a specific category."""
@@ -65,6 +69,7 @@ def category_detail(request: HttpRequest, category_id: int) -> HttpResponse:
     )
 
 
+@login_required
 @require_http_methods(["POST"])
 def category_toggle(request: HttpRequest, category_id: int) -> HttpResponse:
     """Toggle the is_active status of a category."""
@@ -75,6 +80,7 @@ def category_toggle(request: HttpRequest, category_id: int) -> HttpResponse:
     return redirect("wellbeing:category_list")
 
 
+@login_required
 @require_http_methods(["GET", "POST"])
 def option_create(request: HttpRequest, category_id: int) -> HttpResponse:
     """Create a new option for a category."""
@@ -108,6 +114,7 @@ def option_create(request: HttpRequest, category_id: int) -> HttpResponse:
     )
 
 
+@login_required
 @require_http_methods(["GET", "POST"])
 def category_create(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
@@ -131,6 +138,7 @@ def category_create(request: HttpRequest) -> HttpResponse:
     )
 
 
+@login_required
 @require_http_methods(["GET", "POST"])
 def category_edit(request: HttpRequest, category_id: int) -> HttpResponse:
     category = get_object_or_404(WellbeingCategory, pk=category_id)
@@ -155,6 +163,7 @@ def category_edit(request: HttpRequest, category_id: int) -> HttpResponse:
     )
 
 
+@login_required
 @require_http_methods(["GET", "POST"])
 def entry_create(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
@@ -185,6 +194,7 @@ def entry_create(request: HttpRequest) -> HttpResponse:
     )
 
 
+@login_required
 @require_http_methods(["GET", "POST"])
 def entry_quick(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
@@ -211,6 +221,7 @@ def entry_quick(request: HttpRequest) -> HttpResponse:
     return render(request, "wellbeing/entry_quick.html", {"form": form})
 
 
+@login_required
 @require_http_methods(["GET"])
 def api_category_options(request: HttpRequest, category_id: int) -> JsonResponse:
     """API endpoint to get options for a category (for dynamic form updates)."""
@@ -223,6 +234,7 @@ def api_category_options(request: HttpRequest, category_id: int) -> JsonResponse
     return JsonResponse({"options": list(options)})
 
 
+@login_required
 @require_http_methods(["GET", "POST"])
 def entry_bulk(request: HttpRequest) -> HttpResponse:
     """Create entries for multiple categories at once."""
@@ -254,6 +266,7 @@ def entry_bulk(request: HttpRequest) -> HttpResponse:
     return render(request, "wellbeing/entry_bulk.html", {"form": form})
 
 
+@login_required
 @require_http_methods(["GET"])
 def entry_list(request: HttpRequest) -> HttpResponse:
     """List all entries with optional filtering."""
@@ -287,6 +300,7 @@ def entry_list(request: HttpRequest) -> HttpResponse:
     )
 
 
+@login_required
 @require_http_methods(["GET"])
 def entry_detail(request: HttpRequest, entry_id: int) -> HttpResponse:
     """View details of a specific entry."""
@@ -303,6 +317,7 @@ def entry_detail(request: HttpRequest, entry_id: int) -> HttpResponse:
     )
 
 
+@login_required
 @require_http_methods(["GET", "POST"])
 def entry_edit(request: HttpRequest, entry_id: int) -> HttpResponse:
     """Edit an existing entry."""
@@ -328,6 +343,7 @@ def entry_edit(request: HttpRequest, entry_id: int) -> HttpResponse:
     )
 
 
+@login_required
 @require_http_methods(["GET", "POST"])
 def entry_delete(request: HttpRequest, entry_id: int) -> HttpResponse:
     """Delete an entry."""

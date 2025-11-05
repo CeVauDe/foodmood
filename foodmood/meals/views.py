@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.db.models import Count
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -7,6 +8,7 @@ from .forms import MealForm
 from .models import Meal
 
 
+@login_required
 @require_http_methods(["GET", "POST"])
 def index(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
@@ -28,6 +30,7 @@ def index(request: HttpRequest) -> HttpResponse:
     )
 
 
+@login_required
 @require_http_methods(["GET"])
 def detail(request: HttpRequest, meal_id: int) -> HttpResponse:
     meal = get_object_or_404(Meal.objects.prefetch_related("edibles"), pk=meal_id)
