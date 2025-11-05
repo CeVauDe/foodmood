@@ -300,7 +300,7 @@ class UserLogoutViewTests(TestCase):
 
         # Check redirect to home (which will redirect to login for anonymous users)
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, reverse("index"))
+        self.assertEqual(response["Location"], reverse("index"))
 
         # Check success message
         messages = list(get_messages(response.wsgi_request))
@@ -316,7 +316,7 @@ class UserLogoutViewTests(TestCase):
 
         # Should still redirect to home
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, reverse("index"))
+        self.assertEqual(response["Location"], reverse("index"))
 
         # Should still show success message
         messages = list(get_messages(response.wsgi_request))
@@ -339,7 +339,7 @@ class NavigationIntegrationTests(TestCase):
         response = self.client.get(self.home_url)
         # Anonymous users should be redirected to login
         self.assertEqual(response.status_code, 302)
-        self.assertIn("/users/login/", response.url)
+        self.assertIn("/users/login/", response["Location"])
 
     def test_authenticated_user_navigation(self) -> None:
         """Test navigation for authenticated users"""
@@ -378,10 +378,10 @@ class NavigationIntegrationTests(TestCase):
         # 3. Logout
         response = self.client.get(reverse("users:logout"))
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, reverse("index"))
+        self.assertEqual(response["Location"], reverse("index"))
         self.assertFalse("_auth_user_id" in self.client.session)
 
         # 4. Anonymous users can't access home page anymore - redirected to login
         response = self.client.get(self.home_url)
         self.assertEqual(response.status_code, 302)
-        self.assertIn("/users/login/", response.url)
+        self.assertIn("/users/login/", response["Location"])
