@@ -13,16 +13,15 @@ class WellbeingOptionInline(admin.TabularInline):
 
 
 @admin.register(WellbeingCategory)
-class WellbeingCategoryAdmin(admin.ModelAdmin):
+class WellbeingCategoryAdmin(admin.ModelAdmin[WellbeingCategory]):
     list_display = ["name", "icon", "option_count", "is_active", "creation_date"]
     list_filter = ["is_active", "creation_date"]
     search_fields = ["name", "description"]
     inlines = [WellbeingOptionInline]
 
-    def option_count(self, obj):
-        return obj.options.count()
-
-    option_count.short_description = "Options"
+    @admin.display(description="Options")
+    def option_count(self, obj: WellbeingCategory) -> int:
+        return obj.options.count()  # type: ignore[attr-defined, no-any-return]
 
 
 @admin.register(WellbeingOption)
@@ -34,7 +33,7 @@ class WellbeingOptionAdmin(admin.ModelAdmin):
 
 
 @admin.register(WellbeingEntry)
-class WellbeingEntryAdmin(admin.ModelAdmin):
+class WellbeingEntryAdmin(admin.ModelAdmin[WellbeingEntry]):
     list_display = [
         "category",
         "option",
@@ -49,7 +48,6 @@ class WellbeingEntryAdmin(admin.ModelAdmin):
         "option"
     ]  # Easier selection for categories with many options
 
-    def option_value(self, obj):
+    @admin.display(description="Value")
+    def option_value(self, obj: WellbeingEntry) -> int:
         return obj.option.value
-
-    option_value.short_description = "Value"
