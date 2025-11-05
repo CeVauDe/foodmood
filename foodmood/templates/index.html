@@ -1,13 +1,35 @@
 {% extends "layout.html" %}
 
-{% block title %}FoodMood - Under Construction{% endblock %}
+{% block title %}FoodMood - Home{% endblock %}
 
 {% block body %}
     <div class="main-container">
-        <div class="status-icon">🚧</div>
-        <h1>FoodMood</h1>
-        <p>This project is currently under construction.</p>
-        <p>We're working hard to bring you something amazing!</p>
-        <div class="coming-soon">Coming soon...</div>
+        <div class="welcome-section">
+            <h1>🌟 Welcome to FoodMood</h1>
+            <p class="subtitle">Track what you eat and how you feel</p>
+        </div>
+
+        <div class="quick-actions">
+            <h2>Quick Actions</h2>
+            <div class="action-cards">
+                <a href="{% url 'edibles:index' %}" class="action-card edibles-card">
+                    <div class="card-icon">🍎</div>
+                    <h3>Create Edible</h3>
+                    <p>Add a food or drink item</p>
+                </a>
+
+                <a href="{% url 'meals:index' %}" class="action-card meals-card">
+                    <div class="card-icon">🍽️</div>
+                    <h3>Log Meal</h3>
+                    <p>Record your meals</p>
+                </a>
+
+                <a href="{% url 'wellbeing:entry_quick' %}" class="action-card wellbeing-card">
+                    <div class="card-icon">💚</div>
+                    <h3>Track Wellbeing</h3>
+                    <p>Quick mood & wellness log</p>
+                </a>
+            </div>
+        </div>
     </div>
 {% endblock %}
