@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from django.contrib.auth.models import User
 from django.test import TestCase
 from django.utils import timezone
 from edibles.models import Edible
@@ -203,6 +204,11 @@ class MealViewTestCase(TestCase):
     def setUp(self) -> None:
         self.bread = Edible.objects.create(name="Bread")
         self.cheese = Edible.objects.create(name="Cheese")
+        # Create and login a test user
+        self.user = User.objects.create_user(
+            username="testuser", password="testpassword123"
+        )
+        self.client.login(username="testuser", password="testpassword123")
 
     def test_index_view_get(self) -> None:
         """Test GET request to meals index view."""
