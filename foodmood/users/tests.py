@@ -298,8 +298,9 @@ class UserLogoutViewTests(TestCase):
         # Check user is logged out
         self.assertFalse("_auth_user_id" in self.client.session)
 
-        # Check redirect to home
-        self.assertRedirects(response, reverse("index"))
+        # Check redirect to home (which will redirect to login for anonymous users)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse("index"))
 
         # Check success message
         messages = list(get_messages(response.wsgi_request))
@@ -314,7 +315,8 @@ class UserLogoutViewTests(TestCase):
         response = self.client.get(self.logout_url)
 
         # Should still redirect to home
-        self.assertRedirects(response, reverse("index"))
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse("index"))
 
         # Should still show success message
         messages = list(get_messages(response.wsgi_request))
@@ -335,14 +337,9 @@ class NavigationIntegrationTests(TestCase):
     def test_anonymous_user_navigation(self) -> None:
         """Test navigation for anonymous users"""
         response = self.client.get(self.home_url)
-        self.assertEqual(response.status_code, 200)
-
-        # Should show login and register buttons
-        self.assertContains(response, "Login")
-        self.assertContains(response, "Register")
-
-        # Should not show profile dropdown
-        self.assertNotContains(response, "bi-person-fill")
+        # Anonymous users should be redirected to login
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/users/login/", response.url)
 
     def test_authenticated_user_navigation(self) -> None:
         """Test navigation for authenticated users"""
@@ -375,14 +372,16 @@ class NavigationIntegrationTests(TestCase):
 
         # 2. Check home page shows authenticated state
         response = self.client.get(self.home_url)
+        self.assertEqual(response.status_code, 200)
         self.assertContains(response, "flowuser")
 
         # 3. Logout
         response = self.client.get(reverse("users:logout"))
-        self.assertRedirects(response, self.home_url)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse("index"))
         self.assertFalse("_auth_user_id" in self.client.session)
 
-        # 4. Check home page shows anonymous state
+        # 4. Anonymous users can't access home page anymore - redirected to login
         response = self.client.get(self.home_url)
-        self.assertContains(response, "Login")
-        self.assertContains(response, "Register")
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/users/login/", response.url)
