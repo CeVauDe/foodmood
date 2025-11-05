@@ -4,9 +4,9 @@
 
 {% block body %}
 <div class="main-container">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>Wellbeing Tracker</h1>
-        <div>
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+        <h1 class="mb-0">Wellbeing Tracker</h1>
+        <div class="d-flex flex-wrap gap-2">
             <a href="{% url 'wellbeing:entry_quick' %}" class="btn btn-primary">
                 Quick Entry
             </a>
