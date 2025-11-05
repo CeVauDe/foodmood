@@ -2,6 +2,11 @@
 
 import multiprocessing
 import os
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from gunicorn.arbiter import Arbiter  # type: ignore[import-untyped]
+    from gunicorn.workers.base import Worker  # type: ignore[import-untyped]
 
 # Server socket
 bind = "0.0.0.0:8000"
@@ -48,21 +53,21 @@ raw_env = [
 graceful_timeout = 30
 
 
-def when_ready(server) -> None:
+def when_ready(server: "Arbiter") -> None:
     """Called just after the server is started."""
     server.log.info("Server is ready. Spawning workers")
 
 
-def worker_int(worker) -> None:
+def worker_int(worker: "Worker") -> None:
     """Called just after a worker has been killed by a signal."""
     worker.log.info("worker received INT or QUIT signal")
 
 
-def pre_fork(server, worker) -> None:
+def pre_fork(server: "Arbiter", worker: "Worker") -> None:
     """Called just before a worker is forked."""
     server.log.info("Worker spawned (pid: %s)", worker.pid)
 
 
-def post_fork(server, worker) -> None:
+def post_fork(server: "Arbiter", worker: "Worker") -> None:
     """Called just after a worker has been forked."""
     server.log.info("Worker spawned (pid: %s)", worker.pid)

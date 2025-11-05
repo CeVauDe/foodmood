@@ -1,5 +1,7 @@
+from typing import Any
+
 import django.forms as forms
-from django.forms import inlineformset_factory
+from django.forms import ModelChoiceField, inlineformset_factory
 from django.utils import timezone
 
 from .models import WellbeingCategory, WellbeingEntry, WellbeingOption
@@ -80,19 +82,23 @@ class EntryForm(forms.ModelForm):
             "notes": forms.Textarea(attrs={"class": "form-control", "rows": 3}),
         }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         # If category is pre-selected, filter options
         if "category" in self.data:
             try:
-                category_id = int(self.data.get("category"))
-                self.fields["option"].queryset = WellbeingOption.objects.filter(
+                category_id = int(self.data.get("category"))  # type: ignore[arg-type]
+                option_field = self.fields["option"]
+                assert isinstance(option_field, ModelChoiceField)
+                option_field.queryset = WellbeingOption.objects.filter(
                     category_id=category_id
                 ).order_by("order", "value")
             except (ValueError, TypeError):
                 pass
         elif self.instance.pk and self.instance.category:
-            self.fields["option"].queryset = self.instance.category.options.all()
+            option_field = self.fields["option"]
+            assert isinstance(option_field, ModelChoiceField)
+            option_field.queryset = self.instance.category.options.all()
 
 
 class QuickEntryForm(forms.ModelForm):
@@ -106,13 +112,15 @@ class QuickEntryForm(forms.ModelForm):
             "option": forms.RadioSelect(attrs={"class": "form-check-input"}),
         }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         # Auto-set recorded_at to now in view
         if "category" in self.data:
             try:
-                category_id = int(self.data.get("category"))
-                self.fields["option"].queryset = WellbeingOption.objects.filter(
+                category_id = int(self.data.get("category"))  # type: ignore[arg-type]
+                option_field = self.fields["option"]
+                assert isinstance(option_field, ModelChoiceField)
+                option_field.queryset = WellbeingOption.objects.filter(
                     category_id=category_id
                 ).order_by("order", "value")
             except (ValueError, TypeError):
@@ -134,16 +142,16 @@ class BulkEntryForm(forms.Form):
         widget=forms.Textarea(attrs={"class": "form-control", "rows": 3}),
     )
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         # Dynamically add a field for each active category
         categories = WellbeingCategory.objects.filter(is_active=True).prefetch_related(
             "options"
         )
         for category in categories:
-            field_name = f"category_{category.id}"
+            field_name = f"category_{category.pk}"
             self.fields[field_name] = forms.ModelChoiceField(
-                queryset=category.options.all(),
+                queryset=category.options.all(),  # type: ignore[attr-defined]
                 required=False,
                 label=f"{category.icon} {category.name}"
                 if category.icon

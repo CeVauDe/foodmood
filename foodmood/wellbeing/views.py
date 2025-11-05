@@ -1,3 +1,5 @@
+from typing import Any
+
 from django.contrib import messages
 from django.db import transaction
 from django.http import HttpRequest, HttpResponse, JsonResponse
@@ -51,7 +53,7 @@ def category_detail(request: HttpRequest, category_id: int) -> HttpResponse:
     category = get_object_or_404(
         WellbeingCategory.objects.prefetch_related("options"), pk=category_id
     )
-    recent_entries = category.entries.select_related("option")[:10]
+    recent_entries = category.entries.select_related("option")[:10]  # type: ignore[attr-defined]
 
     return render(
         request,
@@ -95,7 +97,7 @@ def option_create(request: HttpRequest, category_id: int) -> HttpResponse:
             )
             messages.success(request, f"Added option '{label}' to {category.name}")
 
-        return redirect("wellbeing:category_detail", category_id=category.id)
+        return redirect("wellbeing:category_detail", category_id=category.pk)
 
     return render(
         request,
@@ -141,7 +143,7 @@ def category_edit(request: HttpRequest, category_id: int) -> HttpResponse:
             with transaction.atomic():
                 form.save()
                 formset.save()
-            return redirect("wellbeing:category_detail", category_id=category.id)
+            return redirect("wellbeing:category_detail", category_id=category.pk)
     else:
         form = CategoryForm(instance=category)
         formset = OptionFormSet(instance=category)
@@ -166,7 +168,7 @@ def entry_create(request: HttpRequest) -> HttpResponse:
     else:
         # Pre-select category if provided in query params
         category_id = request.GET.get("category")
-        initial = {"recorded_at": timezone.now()}
+        initial: dict[str, Any] = {"recorded_at": timezone.now()}
         if category_id:
             initial["category"] = category_id
         form = EntryForm(initial=initial)
@@ -311,7 +313,7 @@ def entry_edit(request: HttpRequest, entry_id: int) -> HttpResponse:
         if form.is_valid():
             form.save()
             messages.success(request, "Entry updated successfully")
-            return redirect("wellbeing:entry_detail", entry_id=entry.id)
+            return redirect("wellbeing:entry_detail", entry_id=entry.pk)
     else:
         form = EntryForm(instance=entry)
 
